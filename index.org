@@ -1,0 +1,71 @@
+#+title: Making of: Circle drawing tutorial
+#+date: <2022-11-28 Mon>
+
+People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v3]]. The ideas here will be similar if you use Vue v2 or React or Preact or Lit or Svelte etc.
+
+#+begin_export html
+<figure>
+{ TODO: diagram showing the final result }
+</figure>
+#+end_export
+
+* Web page
+:PROPERTIES:
+:CUSTOM_ID: web-page
+:END:
+
+I usually start with a basic web page template that includes scripts, footers, and one blank SVG diagram:
+
+#+begin_export html
+<figure>
+<iframe src="1/"/>
+</figure>
+#+end_export
+
+I attach an ~id=~ to an html element so that I can get to it from Javascript. Sometimes I'll attach it to the ~<svg>~ and sometimes to a ~<div>~ or ~<figure>~ outside the svg. For this page, I want interactive elements outside the svg so I'm putting the id on the ~<figure>~.
+
+#+include: "1/index.html" src html
+
+I'll omit the header and footer from the rest of the examples. Click the filename on the upper right to see the entire page up to that point. Using a ~viewBox~ on ~<svg>~ tells it the coordinate system to for drawing. We can use that to keep a consistent coordinate system even if the diagram is resized.
+
+* Diagram
+:PROPERTIES:
+:CUSTOM_ID: diagram
+:END:
+
+Sometimes I'll add a diagram first and then add some text; other times I'll start with the text and then figure out the diagrams. For this page I'll start with a diagram.
+
+The tutorial is about drawing circles on a square grid, so I need to draw a grid and also draw circles. I'll draw a grid with SVG. I start by making /one/ grid cell. I can write out the SVG for it:
+
+#+begin_export html
+<figure>
+<iframe src="2/"/>
+</figure>
+#+end_export
+
+That's plain HTML+SVG. I could've created that SVG with an interactive editor but in this case I wrote it by hand. But I want /many/ grid cells. This is where the coding comes in. I want to repeat it, varying the position each time:
+
+#+begin_export html
+<figure>
+<iframe src="3/"/>
+</figure>
+#+end_export
+
+How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create the =<rect>= for each element in =positions=. I make an array =positions= that contains all the x,y values I want on the grid, and then Vue will make one =<rect>= for each. The ~:x=~ syntax means it's setting the =x= attribute, but will compute it using a Javascript expression like =x * scale=.
+
+In React, you'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte you'd use ~#{each … in positions}~. In Lit you'd use ~${repeat(positions, …)}~. These libraries have a way to loop over arrays, but they differ in the details. I'm showing Vue on this page but the concepts are similar across these libraries.
+
+Those of you who know SVG might choose to use =viewBox= or =transform= to change the coordinate system to place points at the center of each grid square instead of at the top left, and also to scale things so that each grid square is 1 unit across instead of =scale= pixels. I did this in the original article but I didn't for this tutorial.
+
+
+#+begin_export html
+<style>
+  iframe { width: 100%; }
+</style>
+
+<x:footer>
+  <script type="module" src="making-of-circle-drawing.js"></script>
+  Created 28 Nov 2022; &#160;
+  <!-- hhmts start -->Last modified: 01 Dec 2022<!-- hhmts end -->
+</x:footer>
+#+end_export

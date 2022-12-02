@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Circle drawing</title>
+    <link rel="stylesheet" href="../pagestyle.css">
+    <script type="module" src="circle-drawing.js"></script>
+  </head>
+  <body>
+    <figure id="diagram">
+      <svg viewBox="0 0 550 200">
+        <rect v-for="{x,y} in positions"
+              :x="x * scale" :y="y * scale"
+              :width="scale" :height="scale"
+              fill="white" stroke="gray" />
+      </svg>
+    </figure>
+  </body>
+</html>

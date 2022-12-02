@@ -1,7 +1,7 @@
 #+title: Making of: Circle drawing tutorial
 #+date: <2022-11-28 Mon>
 
-People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v3]]. The ideas here will be similar if you use Vue v2 or React or Preact or Lit or Svelte etc.
+People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use Vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v2]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
 
 #+begin_export html
 <figure>
@@ -18,7 +18,7 @@ I usually start with a basic web page template that includes scripts, footers, a
 
 #+begin_export html
 <figure>
-<iframe src="1/"/>
+  <a-step src="1/" />
 </figure>
 #+end_export
 
@@ -39,7 +39,7 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 
 #+begin_export html
 <figure>
-<iframe src="2/"/>
+  <a-step src="2/" />
 </figure>
 #+end_export
 
@@ -47,7 +47,7 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 
 #+begin_export html
 <figure>
-<iframe src="3/"/>
+  <a-step src="3/" />
 </figure>
 #+end_export
 
@@ -66,6 +66,6 @@ Those of you who know SVG might choose to use =viewBox= or =transform= to change
 <x:footer>
   <script type="module" src="making-of-circle-drawing.js"></script>
   Created 28 Nov 2022; &#160;
-  <!-- hhmts start -->Last modified: 01 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 02 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

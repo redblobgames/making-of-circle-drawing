@@ -1,4 +1,4 @@
-import {createApp} from '../vue.v3.browser.js';
+import Vue from '../vue.v2.esm.browser.js';
 
 const gridWidth = 25;
 const gridHeight = 10;
@@ -10,12 +10,12 @@ for (let x = 0; x < gridWidth; x++) {
     }
 }
                
-createApp({
-    data() {
-        return {
-            scale: 22,
-            positions: positions,
-        };
+new Vue({
+    el: "#diagram",
+    data: {
+        scale: 22,
+        positions: positions,
     },
-}).mount("#diagram");
+});
+
 

@@ -1,3 +1,7 @@
 /index.html
 /index.bxml
-/vue.v3.browser.js
+
+# Get Vue v2 from https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.esm.browser.js
+# See install docs at https://v2.vuejs.org/v2/guide/installation.html
+# I use Vue v2.6 not v2.7 because 2.6 is quite a bit smaller
+/vue.v2.esm.browser.js

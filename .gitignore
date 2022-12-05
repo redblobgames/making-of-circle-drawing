@@ -5,3 +5,5 @@
 # See install docs at https://v2.vuejs.org/v2/guide/installation.html
 # I use Vue v2.6 not v2.7 because 2.6 is quite a bit smaller
 /vue.v2.esm.browser.js
+/prism*.js
+/node_modules/

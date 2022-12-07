@@ -7,7 +7,8 @@
 console.info("I'm happy to answer questions about the code; email me at redblobgames@gmail.com");
 
 import Vue from './vue.v2.esm.browser.js';
-/* global Prism */
+import {Prism, Diff} from './_build/lib.js';
+
 
 /* Highlight Vue v-bind and v-on */
 Prism.languages.markup.tag.addAttribute(

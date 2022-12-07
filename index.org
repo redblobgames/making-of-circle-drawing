@@ -19,7 +19,7 @@ I usually start with a basic web page template that includes scripts, footers, a
 
 #+begin_export html
 <figure>
-  <a-step :show-all="true" src="1/" />
+  <a-step :show-all="true" prev="0/" curr="1/" />
 </figure>
 #+end_export
 
@@ -38,7 +38,7 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 
 #+begin_export html
 <figure>
-  <a-step src="2/" />
+  <a-step prev="1/" curr="2/" />
 </figure>
 #+end_export
 
@@ -46,7 +46,7 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 
 #+begin_export html
 <figure>
-  <a-step src="3/" />
+  <a-step prev="2/" curr="3/" />
 </figure>
 #+end_export
 
@@ -61,7 +61,7 @@ Those of you who know SVG might choose to use =viewBox= or =transform= to change
 <style>
   iframe { width: 100%; }
 
-  figure { line-height: 1.15; } /* not sure what this *should* be */
+  pre { line-height: 1.25em; }
 
   /* Prism */
   .language-html { font-size: 1rem; }
@@ -71,7 +71,8 @@ Those of you who know SVG might choose to use =viewBox= or =transform= to change
   .attr-value { color: hsl(300, 10%, 50%); font-weight: normal; }
   .value.language-javascript { color: hsl(200, 30%, 50%); font-family: var(--monospace); font-weight: normal; font-style: italic; }
 
-  .prefix.inserted { color: hsl(150, 50%, 50%); background: hsl(150, 30%, 90%); }
+  .prefix.deleted { color: hsl(0, 50%, 50%); background: hsl(0, 30%, 90%); }
+  .prefix.inserted { color: hsl(180, 50%, 50%); background: hsl(180, 30%, 90%); }
 </style>
 
 <x:footer>

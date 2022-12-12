@@ -59,10 +59,10 @@ Prism.languages.markup.tag.addAttribute(
 );
 
 Vue.component('a-step', {
-    props: ['curr', 'prev', 'show-all'],
+    props: ['curr', 'prev', 'show'],
     data() {
         return {
-            tab: 'html', /* output, html, figure, js */
+            tab: this.show ?? 'figure', /* output, html, figure, js */
             showDiff: false,
             prevHtml: "",
             prevJs: "",
@@ -72,10 +72,16 @@ Vue.component('a-step', {
     },
     template: `
     <div>
-       <iframe v-if="tab === 'output'" :src="src"/>
+       <iframe v-if="tab === 'output'" ref="iframe" :src="curr" scrolling="no" @load="resizeIFrame" />
        <pre v-else><code :class="languageClass" v-html="syntaxHighlightedText"/></pre>
     </div>
     `,
+    methods: {
+        resizeIFrame() {
+            let {iframe} = this.$refs;
+            iframe.style.height = iframe.contentDocument.body.clientHeight + "px";
+        },
+    },
     computed: {
         lang() {
             return {html: "html", figure: "html", js: "javascript"}[this.tab];
@@ -104,14 +110,18 @@ Vue.component('a-step', {
         },
     },
     async mounted() {
-        let loadPrevHtml = fetch(this.prev + "index.html");
-        let loadPrevJs = fetch(this.prev + "circle-drawing.js");
-        let loadCurrHtml = fetch(this.curr + "index.html");
-        let loadCurrJs = fetch(this.curr + "circle-drawing.js");
-        this.prevHtml = await (await loadPrevHtml).text();
-        this.prevJs = await (await loadPrevJs).text();
-        this.currHtml = await (await loadCurrHtml).text();
-        this.currJs = await (await loadCurrJs).text();
+        if (this.prev) {
+            let loadPrevHtml = fetch(this.prev + "index.html");
+            let loadPrevJs = fetch(this.prev + "circle-drawing.js");
+            this.prevHtml = await (await loadPrevHtml).text();
+            this.prevJs = await (await loadPrevJs).text();
+        }
+        if (this.curr) {
+            let loadCurrHtml = fetch(this.curr + "index.html");
+            let loadCurrJs = fetch(this.curr + "circle-drawing.js");
+            this.currHtml = await (await loadCurrHtml).text();
+            this.currJs = await (await loadCurrJs).text();
+        }
     },
 });
 

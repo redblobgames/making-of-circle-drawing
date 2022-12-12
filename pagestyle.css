@@ -27,9 +27,17 @@ footer {
     min-height: 3em;
     text-align: center;
 }
+figure {
+    /*
+       I can't have a margin on this because it messes up the
+       calculations for my iframe sizing, so instead I have a padding
+     */
+    margin: 0;
+    padding: 0.5em 1em;
+}
 svg {
+    display: block;
     background: white;
-    overflow: visible;
 }
 
 /* the draggable elements all have data-name= ; I want them to stand out */

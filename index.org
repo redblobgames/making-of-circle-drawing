@@ -19,7 +19,7 @@ I usually start with a basic web page template that includes scripts, footers, a
 
 #+begin_export html
 <figure>
-  <a-step :show-all="true" prev="0/" curr="1/" />
+  <a-step show="html" prev="0/" curr="1/" />
 </figure>
 #+end_export
 
@@ -38,6 +38,7 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 
 #+begin_export html
 <figure>
+  <a-step show="output" curr="2/" />
   <a-step prev="1/" curr="2/" />
 </figure>
 #+end_export
@@ -46,6 +47,7 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 
 #+begin_export html
 <figure>
+  <a-step show="output" curr="3/" />
   <a-step prev="2/" curr="3/" />
 </figure>
 #+end_export
@@ -59,8 +61,14 @@ Those of you who know SVG might choose to use =viewBox= or =transform= to change
 
 #+begin_export html
 <style>
-  iframe { width: 100%; }
-
+  iframe { 
+    width: 100%; 
+    border: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 0.5px 3px 1px rgba(0, 0, 0, 0.3);
+  }
+    
   pre { line-height: 1.25em; }
 
   /* Prism */
@@ -82,6 +90,6 @@ Those of you who know SVG might choose to use =viewBox= or =transform= to change
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 07 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 12 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

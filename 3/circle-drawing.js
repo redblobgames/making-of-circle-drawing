@@ -14,7 +14,9 @@ new Vue({
     el: "#diagram",
     data: {
         scale: 22,
-        positions: positions,
+        gridWidth,
+        gridHeight,
+        positions,
     },
 });
 

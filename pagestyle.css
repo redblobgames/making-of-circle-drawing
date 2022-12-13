@@ -7,8 +7,8 @@ html, body {
     margin: 0;
 }
 html {
-    background-color: hsl(60 10% 95%);
-    color: hsl(60 0% 0%);
+    background-color: white;
+    color: black;
     font-family: sans-serif;
     font-size: min(1.25rem, calc(0.5rem + 1vw));
 }
@@ -37,7 +37,6 @@ figure {
 }
 svg {
     display: block;
-    background: white;
 }
 
 /* the draggable elements all have data-name= ; I want them to stand out */

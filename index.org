@@ -58,6 +58,22 @@ In React, you'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte
 
 Those of you who know SVG might choose to use =viewBox= or =transform= to change the coordinate system to place points at the center of each grid square instead of at the top left, and also to scale things so that each grid square is 1 unit across instead of =scale= pixels. I did this in the original article but I didn't for this tutorial.
 
+* Detail: negative space
+:PROPERTIES:
+:CUSTOM_ID: detail-negative-space
+:END:
+
+While working on a page, I'll sometimes work on the details during the process and sometimes towards the end. On this page I'll work on them during the process. For the grid, I sometimes use [[href:/making-of/little-things/#negative-space][negative space]]. Instead of drawing the grid lines, I'll draw grid interiors slightly smaller, in a color other than the background. The gaps serve as the edges:
+
+#+begin_export html
+<figure>
+  <a-step show="output" curr="4/" />
+  <a-step prev="3/" curr="4/" />
+</figure>
+#+end_export
+
+I don't do this for all pages. I use this on the A* pages, where the attention should be on the paths, but not on the hexagon pages, where the attention should be on the grid itself. Sometimes the color scheme doesn't allow for it.
+
 
 #+begin_export html
 <style>

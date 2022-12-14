@@ -54,7 +54,7 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 
 How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create the =<rect>= for each element in =positions=. I make an array =positions= that contains all the x,y values I want on the grid, and then Vue will make one =<rect>= for each. The ~:x=~ syntax means it's setting the =x= attribute, but will compute it using a Javascript expression like =x * scale=.
 
-In React, you'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte you'd use ~#{each … in positions}~. In Lit you'd use ~${repeat(positions, …)}~. These libraries have a way to loop over arrays, but they differ in the details. I'm showing Vue on this page but the concepts are similar across these libraries.
+In React, I'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte I'd use ~#{each … in positions}~. In Lit I'd use ~${repeat(positions, …)}~. These libraries have a way to loop over arrays, but they differ in the details. I'm showing Vue on this page but the concepts are similar across these libraries.
 
 Those of you who know SVG might choose to use =viewBox= or =transform= to change the coordinate system to place points at the center of each grid square instead of at the top left, and also to scale things so that each grid square is 1 unit across instead of =scale= pixels. I did this in the original article but I didn't for this tutorial.
 
@@ -74,6 +74,65 @@ While working on a page, I'll sometimes work on the details during the process a
 
 I don't do this for all pages. I use this on the A* pages, where the attention should be on the paths, but not on the hexagon pages, where the attention should be on the grid itself. Sometimes the color scheme doesn't allow for it.
 
+* Algorithm
+:PROPERTIES:
+:CUSTOM_ID: algorithm
+:END:
+
+The most obvious thing to do with an interactive diagram is to run the algorithm and display the results. In this case, the first algorithm I present [[href:/grids/circle-drawing/#distance-test][on the page]] is a distance test in C++:
+
+#+begin_src cpp
+bool inside_circle(Point center, Point tile, float radius) {
+    float dx = center.x - tile.x,
+          dy = center.y - tile.y;
+    float distance = sqrt(dx*dx + dy*dy);
+    return distance <= radius;
+}
+
+for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+        if (inside_circle(center, Point(x, y), radius)) {
+            // do something with (x, y)
+        }
+    }
+}
+#+end_src
+
+This returns a =bool= for each tile. In the diagram, I can use a /color/ to show that boolean value.
+
+#+begin_export html
+<figure>
+  <a-step show="output" curr="5/" />
+</figure>
+#+end_export
+
+But the sample code is C++ and the diagram code is JavaScript, so I have to decide what to do here. I could compile the C++ to WASM so that I can directly call it from JavaScript, but in this case it is easier to reimplement it. The next question is /where/ should it go. I could either have the HTML call a function =insideCircle= and then decide on the color, or I could have the HTML call a function =tileColor= and have that function decide the color. I decided to have an =insideCircle= function. In Vue, it has to be exported to make it available in the HTML template, but that detail will vary in React, Svelte, etc. 
+
+#+begin_export html
+<figure>
+  <a-step show="figure" prev="4/" curr="5/" />
+</figure>
+#+end_export
+
+I also need to decide where to store the circle center and radius. I decided to put those into the Vue =data=, which stores the state for that diagram. I will later want to make these interactive.
+
+#+begin_export html
+<figure>
+  <a-step show="js" prev="4/" curr="5/" />
+</figure>
+#+end_export
+
+One thing to note is that /I didn't implement the entire algorithm/. The full algorithm has a loop over tiles, and then runs the test for each tile, and collects the results. But in the diagram, the loop is implicit. I don't actually need to collect the results.
+
+*This happens a lot*. The code for the /diagram/ is not the same as the original algorithm. The point of the diagram is help the /reader/ understand the concepts. It's not to demonstrate that /I/ know how to implement the algorithm. For example, in [[https://betterexplained.com/articles/quadratic-formula/][this article about the quadratic formula]], it would be easy to run the quadratic formula and give the answer. But the diagrams do something quite different, showing how completing a square relates to the quadratic formula.
+
+* Interaction
+:PROPERTIES:
+:CUSTOM_ID: interaction
+:END:
+
+The diagram is now showing the /output/ of the algorithm, but it's not yet interactive. The obvious thing to do is to allow the reader to change the /inputs/. In this case the inputs are the center and radius of the circle.
+
 
 #+begin_export html
 <style>
@@ -88,13 +147,27 @@ I don't do this for all pages. I use this on the A* pages, where the attention s
   pre { line-height: 1.25em; }
 
   /* Prism */
-  .language-html { font-size: 1rem; }
-  .punctuation { color: hsl(0, 10%, 50%); }
-  .doctype-tag, .tag { color: hsl(0, 0%, 30%); font-weight: bold; }
-  .name, .attr-name { color: hsl(300, 30%, 50%); }
-  .attr-value { color: hsl(300, 10%, 50%); font-weight: normal; }
-  .value.language-javascript { color: hsl(200, 30%, 50%); font-family: var(--monospace); font-weight: normal; font-style: italic; }
+  .language-html, .language-javascript { font-size: 1rem; }
 
+  /* Prism html, purple theme */
+  .token.punctuation { color: #a0a090; font-weight: normal; }
+  .token.doctype-tag, .token.tag { color: hsl(0, 0%, 30%); font-weight: bold; }
+  .token.name, .token.attr-name { color: hsl(300, 30%, 50%); }
+  .token.attr-value { color: hsl(300, 10%, 50%); font-weight: normal; }
+
+  /* Prism javascript, blue theme, but also trying to make it match my emacs-htmlize.scss */
+  .token.keyword { color: hsl(220, 20%, 50%); font-weight: bold; }
+  .token.function { color: #268bd2; }
+  .token.keyword + .token.function { font-weight: bold; }
+  .token.number { color: #888888; }
+  .token.string { color: #888888; }
+  .src .variable-name { color: hsl(200, 20%, 30%); font-weight: normal; }
+
+  /* Prism javascript in html, for Vue, should be blue */
+  .value.language-javascript, .value.language-javascript .token { color: hsl(200, 30%, 50%); font-weight: normal; font-style: italic; }
+  .value.language-javascript .token.punctuation { color: hsl(200, 30%, 30%); }
+
+  /* Prism diffs */
   .prefix.deleted { color: hsl(0, 50%, 50%); background: hsl(0, 30%, 90%); }
   .prefix.inserted { color: hsl(180, 50%, 50%); background: hsl(180, 30%, 90%); }
 </style>
@@ -106,6 +179,6 @@ I don't do this for all pages. I use this on the A* pages, where the attention s
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 12 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 14 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

@@ -20,7 +20,7 @@ I usually start with a basic web page template that includes scripts, footers, a
 #+begin_export html
 <figure>
   <a-output step="1" />
-  <a-step show="html" step="1" />
+  <a-step step="1" />
 </figure>
 #+end_export
 
@@ -40,7 +40,7 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 #+begin_export html
 <figure>
   <a-output step="2" />
-  <a-step step="2" />
+  <a-step restrict="&lt;figure" step="2" />
 </figure>
 #+end_export
 
@@ -49,7 +49,8 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 #+begin_export html
 <figure>
   <a-output step="3" />
-  <a-step step="3" />
+  <a-step restrict="&lt;figure" step="3" />
+  <a-step show="js" step="3" />
 </figure>
 #+end_export
 
@@ -69,7 +70,7 @@ While working on a page, I'll sometimes work on the details during the process a
 #+begin_export html
 <figure>
   <a-output step="4" />
-  <a-step step="4" />
+  <a-step restrict="&lt;figure" step="4" />
 </figure>
 #+end_export
 
@@ -111,7 +112,7 @@ But the sample code is C++ and the diagram code is JavaScript, so I have to deci
 
 #+begin_export html
 <figure>
-  <a-step show="figure" step="5" />
+  <a-step restrict="&lt;figure" step="5" />
 </figure>
 #+end_export
 

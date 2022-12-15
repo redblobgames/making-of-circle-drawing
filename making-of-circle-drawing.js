@@ -10,14 +10,39 @@ import Vue from './vue.v2.esm.browser.js';
 import {Prism, Diff} from './_build/lib.js';
 
 
-/** extract the <figure> section of the html, and de-indent */
-function extractFigure(html) {
-    let i = html.indexOf("<figure"),
-        j = html.indexOf("</figure");
-    let lines = html.slice(i, j).split('\n');
-    lines = lines.map(line => line.replace(/^    /, ""));
-    html = lines.join('\n') + "</figure>";
-    return html;
+/** count how many spaces are at the beginning of a line */
+function measureIndentation(line) {
+    return line.length - line.trimStart().length;
+}
+
+
+/** extract some indented text starting with regexp 'begin', and
+    including with if a closing line matches regexp 'end', and
+    de-indent those lines */
+function extractSection(input, begin, end=/[/}]/) {
+    let lines = input.split('\n');
+    let output = [];
+    let matchIndentation = null;
+    for (let line of lines) {
+        // State machine: either we're inside or outside the matched region
+
+        let beginMatch = line.match(begin);
+        let endMatch = line.match(end);
+        let indentation = measureIndentation(line);
+        
+        if (matchIndentation === null && beginMatch) { // outside
+            matchIndentation = indentation;
+        }
+
+        if (matchIndentation !== null) { // inside
+            output.push(line.slice(matchIndentation));
+            if (endMatch && !beginMatch && indentation === matchIndentation) {
+                matchIndentation = null;
+            }
+        }
+    }
+
+    return output.join('\n');
 }
 
 
@@ -70,10 +95,10 @@ Vue.component('a-output', {
 });
 
 Vue.component('a-step', {
-    props: ['step', 'show', 'from'],
+    props: ['step', 'show', 'restrict'],
     data() {
         return {
-            tab: this.show ?? 'figure', /* html, figure, js */
+            tab: this.show ?? 'html', /* html, js */
             showDiff: false,
             prevHtml: "",
             prevJs: "",
@@ -88,20 +113,21 @@ Vue.component('a-step', {
         curr() { return this.step + "/"; },
         prev() { return (parseFloat(this.step)-1) + "/"; },
         lang() {
-            return {html: "html", figure: "html", js: "javascript"}[this.tab];
+            return {html: "html", js: "javascript"}[this.tab];
         },
         languageClass() {
             let diff = this.showDiff? "diff-" : "";
             return `language-${diff}${this.lang}`;
         },
-        prevFigure() { return extractFigure(this.prevHtml); },
-        currFigure() { return extractFigure(this.currHtml); },
         syntaxHighlightedText() {
             let [prev, curr] =
                 this.tab === 'html'? [this.prevHtml, this.currHtml]
-                : this.tab === 'figure'? [this.prevFigure, this.currFigure]
                 : this.tab === 'js'? [this.prevJs, this.currJs]
                 : ["??", "??"];
+            if (this.restrict) {
+                prev = extractSection(prev, new RegExp(this.restrict));
+                curr = extractSection(curr, new RegExp(this.restrict));
+            }
             if (this.showDiff) {
                 return Prism.highlight(calculateDiffs(prev, curr),
                                        Prism.languages.diff,

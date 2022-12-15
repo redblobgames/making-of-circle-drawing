@@ -58,11 +58,22 @@ Prism.languages.markup.tag.addAttribute(
     'javascript'
 );
 
+Vue.component('a-output', {
+    props: ['step'],
+    template: `<iframe ref="iframe" :src="step+'/'" scrolling="no" @load="resizeIFrame" />`,
+    methods: {
+        resizeIFrame() {
+            let {iframe} = this.$refs;
+            iframe.style.height = iframe.contentDocument.body.clientHeight + "px";
+        },
+    },
+});
+
 Vue.component('a-step', {
-    props: ['curr', 'prev', 'show'],
+    props: ['step', 'show', 'from'],
     data() {
         return {
-            tab: this.show ?? 'figure', /* output, html, figure, js */
+            tab: this.show ?? 'figure', /* html, figure, js */
             showDiff: false,
             prevHtml: "",
             prevJs: "",
@@ -71,18 +82,11 @@ Vue.component('a-step', {
         };
     },
     template: `
-    <div>
-       <iframe v-if="tab === 'output'" ref="iframe" :src="curr" scrolling="no" @load="resizeIFrame" />
-       <pre v-else><code :class="languageClass" v-html="syntaxHighlightedText"/></pre>
-    </div>
+    <pre v-else><code :class="languageClass" v-html="syntaxHighlightedText"/></pre>
     `,
-    methods: {
-        resizeIFrame() {
-            let {iframe} = this.$refs;
-            iframe.style.height = iframe.contentDocument.body.clientHeight + "px";
-        },
-    },
     computed: {
+        curr() { return this.step + "/"; },
+        prev() { return (parseFloat(this.step)-1) + "/"; },
         lang() {
             return {html: "html", figure: "html", js: "javascript"}[this.tab];
         },

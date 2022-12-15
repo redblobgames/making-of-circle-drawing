@@ -19,7 +19,8 @@ I usually start with a basic web page template that includes scripts, footers, a
 
 #+begin_export html
 <figure>
-  <a-step show="html" prev="0/" curr="1/" />
+  <a-output step="1" />
+  <a-step show="html" step="1" />
 </figure>
 #+end_export
 
@@ -38,8 +39,8 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 
 #+begin_export html
 <figure>
-  <a-step show="output" curr="2/" />
-  <a-step prev="1/" curr="2/" />
+  <a-output step="2" />
+  <a-step step="2" />
 </figure>
 #+end_export
 
@@ -47,8 +48,8 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 
 #+begin_export html
 <figure>
-  <a-step show="output" curr="3/" />
-  <a-step prev="2/" curr="3/" />
+  <a-output step="3" />
+  <a-step step="3" />
 </figure>
 #+end_export
 
@@ -67,8 +68,8 @@ While working on a page, I'll sometimes work on the details during the process a
 
 #+begin_export html
 <figure>
-  <a-step show="output" curr="4/" />
-  <a-step prev="3/" curr="4/" />
+  <a-output step="4" />
+  <a-step step="4" />
 </figure>
 #+end_export
 
@@ -102,7 +103,7 @@ This returns a =bool= for each tile. In the diagram, I can use a /color/ to show
 
 #+begin_export html
 <figure>
-  <a-step show="output" curr="5/" />
+  <a-output step="5" />
 </figure>
 #+end_export
 
@@ -110,7 +111,7 @@ But the sample code is C++ and the diagram code is JavaScript, so I have to deci
 
 #+begin_export html
 <figure>
-  <a-step show="figure" prev="4/" curr="5/" />
+  <a-step show="figure" step="5" />
 </figure>
 #+end_export
 
@@ -118,7 +119,7 @@ I also need to decide where to store the circle center and radius. I decided to 
 
 #+begin_export html
 <figure>
-  <a-step show="js" prev="4/" curr="5/" />
+  <a-step show="js" step="5" />
 </figure>
 #+end_export
 

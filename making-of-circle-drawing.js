@@ -79,7 +79,7 @@ function calculateDiffs(oldText, newText) {
 
 /* Highlight Vue v-bind and v-on */
 Prism.languages.markup.tag.addAttribute(
-    /(?:v-|:|@)[-a-zA-Z]+/.source,
+    /(?:v-|:|@)[-.a-zA-Z]+/.source,
     'javascript'
 );
 

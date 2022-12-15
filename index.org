@@ -108,7 +108,7 @@ This returns a =bool= for each tile. In the diagram, I can use a /color/ to show
 </figure>
 #+end_export
 
-But the sample code is C++ and the diagram code is JavaScript, so I have to decide what to do here. I could compile the C++ to WASM so that I can directly call it from JavaScript, but in this case it is easier to reimplement it. The next question is /where/ should it go. I could either have the HTML call a function =insideCircle= and then decide on the color, or I could have the HTML call a function =tileColor= and have that function decide the color. I decided to have an =insideCircle= function. In Vue, it has to be exported to make it available in the HTML template, but that detail will vary in React, Svelte, etc. 
+But the sample code is C++ and the diagram code is JavaScript, so I have to decide what to do here. I could compile the C++ to WASM so that I can directly call it from JavaScript, but in this case it is easier to reimplement it. The next question is /where/ should it go. I could either call =insideCircle= and then choose the color in the HTML, or I could have the HTML call =tileColor= and have that function select the color in JavaScript. I decided to select the color in the HTML. In Vue, a function has to be exported to make it available in the HTML template, but that detail will vary in React, Svelte, etc. 
 
 #+begin_export html
 <figure>
@@ -120,7 +120,7 @@ I also need to decide where to store the circle center and radius. I decided to 
 
 #+begin_export html
 <figure>
-  <a-step show="js" step="5" />
+  <a-step show="js" restrict="function insideCircle|new Vue" step="5" />
 </figure>
 #+end_export
 
@@ -133,8 +133,43 @@ One thing to note is that /I didn't implement the entire algorithm/. The full al
 :CUSTOM_ID: interaction
 :END:
 
-The diagram is now showing the /output/ of the algorithm, but it's not yet interactive. The obvious thing to do is to allow the reader to change the /inputs/. In this case the inputs are the center and radius of the circle.
+The diagram is now showing the /output/ of the algorithm, but it's not yet interactive. The obvious thing to do is to allow the reader to change the /inputs/. In this case the inputs are the center and radius of the circle. Let's add sliders to control those three numbers:
 
+#+begin_export html
+<figure>
+  <a-output step="6" />
+</figure>
+#+end_export
+
+In Vue, React, etc. the "source of truth" is a JavaScript value, and the HTML element displays/edits it. I need two parts, setting the slider /from/ a  JavaScript variable, and updating the JavaScript variable /from/ the slider when it's moved. In Vue, ~v-model~ is a shorthand syntax for setting both of those steps. In Svelte, ~bind:value~ is the shorthand syntax. In React and Lit, I can write the two parts separately. I'm using ~v-model.number~ to tell Vue that I want the value to be a number instead of a string:
+
+#+begin_export html
+<figure>
+  <a-step restrict="&lt;label" step="6" />
+</figure>
+#+end_export
+
+With the radius, I have /two/ =<input>= elements, both set to the same variable. That way I can edit either way (as a slider or an input box).
+
+Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the HTML in this step.
+
+* Detail: direct manipulation
+:PROPERTIES:
+:CUSTOM_ID: interaction-manipulation
+:END:
+
+
+{ detail: drag a marker instead of setting x,y }
+
+{ detail: drag a marker instead of setting the radius }
+
+{ refactor: draggable markers }
+
+{ making a second diagram with cut/paste of the html, almost change in javascript }
+
+{ display distances }
+
+{ add <figure> caption, and make it interactive }
 
 #+begin_export html
 <style>
@@ -181,6 +216,6 @@ The diagram is now showing the /output/ of the algorithm, but it's not yet inter
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 14 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 15 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

@@ -34,6 +34,10 @@ function extractSection(input, begin, end=/[/}]/) {
             matchIndentation = indentation;
         }
 
+        if (indentation < matchIndentation) { // past the block
+            matchIndentation = null;
+        }
+        
         if (matchIndentation !== null) { // inside
             output.push(line.slice(matchIndentation));
             if (endMatch && !beginMatch && indentation === matchIndentation) {

@@ -158,6 +158,50 @@ Editable variables need to be exported in Vue's =data= section, but I already ha
 :CUSTOM_ID: interaction-manipulation
 :END:
 
+Sliders are easy to implement, since the browser already supports ~<input type=range>~. When editing a geometric parameter like /position/, it's often better to directly manipulate the position by dragging it than to indirectly manipulate it by using a slider.
+
+The bad news: this is where things get trickier. The good news: once I figured this part out, I reused it across lots of projects. I'm going to start with the simpler implementation, but there are [[href:/making-of/little-things/#interactivity][many more details that can be added]].
+
+The first thing to do is add a /handle/. This is an object that represents the underlying variable, and is something the reader can drag around. The circle center is in /grid/ coordinates, and I need to turn them into /diagram/ coordinates. To do that, I add =1/2= so that the circle is centered inside a tile, then multiply by =scale=.
+
+#+begin_export html
+<figure>
+  <a-output step="7" />
+  <a-step step="7" restrict="&lt;circle"/>
+</figure>
+#+end_export
+
+So far it's in the SVG but there's no behavior. Let's add some behavior to it:
+
+#+begin_export html
+<figure>
+  <a-output step="8" />
+  <a-step step="8" restrict="&lt;circle"/>
+</figure>
+#+end_export
+
+Here's where it gets tricky. To go from the =center= in grid coordinates to a position in the diagram, I added =1/2= and then multiplied by =scale=. But that's in SVG coordinates. The browser then changed the SVG coordinates into screen coordinates. Here the =event= comes to us in screen coordinates. I need to reverse that:
+
+1. Convert screen coordinates to SVG coordinates, using a helper function.
+2. Convert SVG coordinates to grid coordinates: I divide by =scale= and then subtract =1/2=.
+
+For the first, I use a helper function. It's useful across projects.
+
+#+begin_export html
+<figure>
+  <a-step step="8" show="js" restrict="function convertPixelToSvgCoord" />
+</figure>
+#+end_export
+
+For the second, I used this event handler, which gets called by ~@pointermove="moveCenter"~:
+
+#+begin_export html
+<figure>
+  <a-step step="8" show="js" restrict="moveCenter" />
+</figure>
+#+end_export
+
+This kind of two-way mapping from data to diagram and back is common, and I occasionally go overboard and [[href:articles/curved-paths/making-of.html][write a library to handle it]]. But in most cases I write it manually.
 
 { detail: drag a marker instead of setting x,y }
 
@@ -216,6 +260,6 @@ Editable variables need to be exported in Vue's =data= section, but I already ha
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 15 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 18 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

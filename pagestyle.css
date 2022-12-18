@@ -6,7 +6,6 @@ html, body {
     padding: 0;
     margin: 0;
     accent-color: hsl(0 30% 60%);
-
 }
 html {
     background-color: white;
@@ -42,14 +41,4 @@ svg, figure > label {
 }
 input {
     vertical-align: bottom;
-}
-
-/* the draggable elements all have data-name= ; I want them to stand out */
-span[data-name] {
-    cursor: col-resize;
-    font-weight: bold;
-    border-bottom: 2px dotted #a44;
-}
-.draggable {
-    cursor: move;
 }

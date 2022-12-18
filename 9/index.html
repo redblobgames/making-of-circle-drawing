@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Circle drawing</title>
+    <link rel="stylesheet" href="../pagestyle.css">
+    <script type="module" src="circle-drawing.js"></script>
+  </head>
+  <body>
+    <figure id="diagram">
+      <svg viewBox="0 0 550 220">
+        <rect v-for="{x,y} in positions"
+              :x="x * scale + 1/2" :y="y * scale + 1/2"
+              :width="scale-1" :height="scale-1"
+              :fill="insideCircle(center, {x, y}, radius)
+                     ? 'hsl(0, 30%, 60%)'
+                     : 'hsl(250, 10%, 93%)'"
+        />
+        <circle fill="yellow"
+                @touchstart.prevent=""
+                @pointerdown="pointerDown"
+                @pointerup="pointerUp"
+                @pointercancel="pointerUp"
+                @pointermove="moveCenter"
+                :r="scale * 0.4"
+                :cx="scale * (center.x + 1/2)"
+                :cy="scale * (center.y + 1/2)" />
+      </svg>
+      <label>
+        x = <input v-model.number="center.x"
+                   type="range" min="0" :max="gridWidth-1" />
+      </label>
+      <label>
+        y = <input v-model.number="center.y"
+                   type="range" min="0" :max="gridHeight-1" />
+      </label>
+      <label>
+        radius =
+        <input v-model.number="radius"
+               type="range" min="1" max="8" />
+        <input v-model.number="radius"
+               type="number" min="1" max="8" size="3" />
+      </label>
+    </figure>
+  </body>
+</html>

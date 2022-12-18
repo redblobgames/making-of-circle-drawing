@@ -185,7 +185,7 @@ Here's where it gets tricky. To go from the =center= in grid coordinates to a po
 1. Convert screen coordinates to SVG coordinates, using a helper function.
 2. Convert SVG coordinates to grid coordinates: I divide by =scale= and then subtract =1/2=.
 
-For the first, I use a helper function. It's useful across projects.
+For the first, I use a helper function. It's useful across projects. It doesn't handle all cases, and probably can't [[https://github.com/d3/d3/issues/2810#issuecomment-213786022][because of browser bugs]], but it handles the cases I need it to handle.
 
 #+begin_export html
 <figure>
@@ -193,7 +193,7 @@ For the first, I use a helper function. It's useful across projects.
 </figure>
 #+end_export
 
-For the second, I used this event handler, which gets called by ~@pointermove="moveCenter"~:
+For the second, I use this event handler, which gets called by ~@pointermove="moveCenter"~:
 
 #+begin_export html
 <figure>
@@ -203,9 +203,62 @@ For the second, I used this event handler, which gets called by ~@pointermove="m
 
 This kind of two-way mapping from data to diagram and back is common, and I occasionally go overboard and [[href:articles/curved-paths/making-of.html][write a library to handle it]]. But in most cases I write it manually.
 
-{ detail: drag a marker instead of setting x,y }
+If you try the demo you'll notice it doesn't work that well. There are three problems here:
 
-{ detail: drag a marker instead of setting the radius }
+1. Mouse move hover events don't work well on most touch devices unless you're holding down a button or finger. The solution is to make it move while the mouse button / finger is held down.
+2. You can move the drag handle only while the mouse is on top of the drag handle. The solution is to use [[https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture][pointer capture]], which directs all mouse move events to the drag handle while the button / finger is being held down.
+3. The drag handle isn't snapping to the grid tile, and it can also go off the edge of the grid. The solution is to use =Math.round()=, and then =clamp()=.
+
+Here's the version with dragging instead of mouseover:
+
+#+begin_export html
+<figure>
+  <a-output step="9" />
+</figure>
+#+end_export
+
+To implement this, I need a ~dragging~ flag and a pair of event handlers to update it:
+
+#+begin_export html
+<details><summary>Details →</summary>
+  <p>
+  Pointer events unify touch and mouse, but touch devices <em>also</em>
+  let you scroll the page. I want to prevent <code>touchstart</code> on
+  the drag handle from scrolling the page. Then <code>pointerdown</code>+<code>pointerup</code>
+  let me track whether the mouse/finger is held down. The <code>pointercancel</code>
+  handler gets called <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event">for various reasons</a> and I use that to reset the dragging status.
+  </p>
+</details>
+<figure>
+  <a-step step="9" restrict="&lt;circle"/>
+</figure>
+#+end_export
+
+#+begin_export html
+<figure>
+  <a-step step="9" show="js" restrict="pointer(Down|Up)" />
+</figure>
+#+end_export
+
+We're not done yet! I want to snap the drag handle to the nearest grid tile, using a reusable helper function =clamp()=:
+
+#+begin_export html
+<figure>
+  <a-step step="9" show="js" restrict="function clamp" />
+  <a-step step="9" show="js" restrict=" moveCenter" />
+</figure>
+#+end_export
+
+There are some other details to take care of. Touch events /also/ scroll the browser view. We need to ~prevent~ the ~@touchstart~ event from its default action to stop the scrolling when dragging the handle.
+
+It works now.  [[href:/making-of/little-things/#interactivity][It could be better]]. Even though some of this code is reusable across projects, it's still a bit of work to make draggable handles. I often start with sliders and try out the diagram before implementing drag handles.
+
+* Detail: more direct manipulation
+:PROPERTIES:
+:CUSTOM_ID: interaction-manipulation-2
+:END:
+
+Dragging the circle center around is nicer than setting the two sliders. It might also be nice to adjust the circle radius that way. I think it's time to make a reusable drag handle component. Unlike the first one, 
 
 { refactor: draggable markers }
 
@@ -215,16 +268,21 @@ This kind of two-way mapping from data to diagram and back is common, and I occa
 
 { add <figure> caption, and make it interactive }
 
+{ global: there's some css I haven't explained; should it go into the individual pages }
+
 #+begin_export html
 <style>
-  iframe { 
+  main iframe { 
     width: 100%; 
     border: 0;
     margin: 0;
     padding: 0;
     box-shadow: 0 0.5px 3px 1px rgba(0, 0, 0, 0.3);
   }
-    
+
+  details { padding: 0 1em; }
+  details p { margin: 0; padding: 0 1em; background: hsl(200, 10%, 90%); }
+
   pre { line-height: 1.25em; }
 
   /* Prism */
@@ -260,6 +318,6 @@ This kind of two-way mapping from data to diagram and back is common, and I occa
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 18 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 19 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

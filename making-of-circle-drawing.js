@@ -9,6 +9,17 @@ console.info("I'm happy to answer questions about the code; email me at redblobg
 import Vue from './vue.v2.esm.browser.js';
 import {Prism, Diff} from './_build/lib.js';
 
+/* Highlight Vue attributes as containing javascript values */
+Prism.languages.markup.tag.addAttribute(
+    /(?:v-|:|@)[-.a-zA-Z]+/.source,
+    'javascript'
+);
+/* Highlight Vue template inside js; based on prism-js-templates.js */
+Prism.languages.javascript['template-string'].inside.string = {
+    pattern: /[\s\S]+/,
+    inside: Prism.languages.html
+};
+            
 
 /** count how many spaces are at the beginning of a line */
 function measureIndentation(line) {
@@ -81,11 +92,6 @@ function calculateDiffs(oldText, newText) {
     return outputLines.join('\n');
 }
 
-/* Highlight Vue v-bind and v-on */
-Prism.languages.markup.tag.addAttribute(
-    /(?:v-|:|@)[-.a-zA-Z]+/.source,
-    'javascript'
-);
 
 Vue.component('a-output', {
     props: ['step'],
@@ -97,6 +103,7 @@ Vue.component('a-output', {
         },
     },
 });
+
 
 Vue.component('a-step', {
     props: ['step', 'show', 'diff', 'restrict'],

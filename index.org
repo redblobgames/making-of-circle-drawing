@@ -318,7 +318,30 @@ I should point out that I usually do not try to make something reusable right aw
 :CUSTOM_ID: handle-radius
 :END:
 
-Let's use the new component for changing the radius.
+Let's use the new component for changing the radius. I need a way to map the radius to a position on screen and back.
+
+#+begin_export html
+<figure>
+  <a-step step="11" show="js" restrict="radiusPosition:"/>
+</figure>
+#+end_export
+
+and then I need to add the drag handle to the HTML:
+
+#+begin_export html
+<figure>
+  <a-step step="11" show="html" restrict="radiusPosition"/>
+</figure>
+#+end_export
+
+And … it works! There are now three ways to control the radius, and they all stay in sync:
+
+#+begin_export html
+<figure>
+  <a-output step="11" />
+</figure>
+#+end_export
+
 
 * Distance diagram
 :PROPERTIES:

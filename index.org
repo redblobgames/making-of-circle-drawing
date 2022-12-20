@@ -348,6 +348,7 @@ And … it works! There are now three ways to control the radius, and they all s
 :CUSTOM_ID: distance-diagram
 :END:
 
+The diagram shows the /output/ of the algorithm, but to explain how an algorithm works, I want diagrams that show the /concepts/ behind the algorithm. The main concept here is /distances/, so I want to make a diagram to show distances.
 
 { making a second diagram with cut/paste of the html, almost change in javascript }
 
@@ -380,25 +381,28 @@ And … it works! There are now three ways to control the radius, and they all s
   pre { line-height: 1.25em; }
 
   /* Prism */
-  .language-html, .language-javascript { font-size: 1rem; }
+  .language-html, .language-handlebars, .language-javascript { font-size: 1rem; }
 
   /* Prism html, purple theme */
-  .token.punctuation { color: #a0a090; font-weight: normal; }
-  .token.doctype-tag, .token.tag { color: hsl(0 0% 30%); font-weight: bold; }
-  .token.name, .token.attr-name { color: hsl(300 30% 50%); }
-  .token.attr-value { color: hsl(300 10% 50%); font-weight: normal; }
+  .token.punctuation { color: hsl(300 10% 60%); font-weight: normal; }
+  .token.doctype-tag, .token.tag { color: hsl(300 30% 40%); font-weight: bold; }
+  .token.name, .token.attr-name { color: hsl(300 30% 50%); font-weight: normal; }
+  .token.attr-value { color: hsl(300 10% 50%); }
 
   /* Prism javascript, blue theme, but also trying to make it match my emacs-htmlize.scss */
-  .token.keyword { color: hsl(220 20% 50%); font-weight: bold; }
-  .token.function { color: #268bd2; }
+  .src .type, .src .keyword, .token.keyword { color: hsl(200 20% 40%); font-weight: bold; }
+  .src .function-name, .token.function { color: hsl(200 50% 40%); }
   .token.keyword + .token.function { font-weight: bold; }
-  .token.number { color: #888888; }
-  .token.string { color: #888888; }
+  .token.number { color: #000; }
+  .token.string { color: #888; }
   .src .variable-name { color: hsl(200 20% 30%); font-weight: normal; }
 
   /* Prism javascript in html, for Vue, should be blue */
   .value.language-javascript, .value.language-javascript .token { color: hsl(200 30% 50%); font-weight: normal; font-style: italic; }
   .value.language-javascript .token.punctuation { color: hsl(200 30% 30%); }
+
+  .token.handlebars > :is(:first-child, :last-child) { color: black; }
+  .token.handlebars > :not(:is(:first-child, :last-child)) { color: hsl(200 30% 50%); font-style: italic; }
 
   /* Prism diffs */
   .prefix.deleted { color: hsl(0 50% 50%); background: hsl(0 30% 90%); }
@@ -412,6 +416,6 @@ And … it works! There are now three ways to control the radius, and they all s
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 19 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 20 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

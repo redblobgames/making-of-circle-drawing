@@ -123,7 +123,7 @@ Vue.component('a-step', {
         curr() { return this.step + "/"; },
         prev() { return (parseFloat(this.step)-1) + "/"; },
         lang() {
-            return {html: "html", js: "javascript"}[this.tab];
+            return {html: "handlebars", js: "javascript"}[this.tab];
         },
         languageClass() {
             let diff = this.diff? "diff-" : "";

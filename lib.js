@@ -7,6 +7,8 @@
 
 import diff from 'diff-sequences';
 import prism from 'prismjs';
+import 'prismjs/components/prism-markup-templating.js';
+import 'prismjs/components/prism-handlebars.js';
 import 'prismjs/components/prism-diff.js';
 import 'prismjs/plugins/diff-highlight/prism-diff-highlight.js';
 

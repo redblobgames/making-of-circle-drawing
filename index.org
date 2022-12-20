@@ -342,6 +342,7 @@ And … it works! There are now three ways to control the radius, and they all s
 </figure>
 #+end_export
 
+Note that there are no explicit =redraw()= calls here. In Vue, if I modify the =data=, it will automatically figure out which parts of the diagram need to be redrawn. If you're using React, Svelte, etc., the redraw will work a little differently.
 
 * Distance diagram
 :PROPERTIES:
@@ -350,9 +351,21 @@ And … it works! There are now three ways to control the radius, and they all s
 
 The diagram shows the /output/ of the algorithm, but to explain how an algorithm works, I want diagrams that show the /concepts/ behind the algorithm. The main concept here is /distances/, so I want to make a diagram to show distances.
 
-{ making a second diagram with cut/paste of the html, almost change in javascript }
+#+begin_export html
+<figure>
+  <a-output step="12" />
+</figure>
+#+end_export
 
-{ display distances }
+To implement this, I added =<text>= to each grid tile, using Vue's ~{{…}}~ to evaluate a JavaScript expression to set the text:
+
+#+begin_export html
+<figure>
+  <a-step step="12" :diff="true" restrict="&lt;svg" />
+</figure>
+#+end_export
+
+I haven't changed the JavaScript at all … yet. I want two diagrams on the page, not only one, so I need to have two =<figure>= tags, and also need to change the JavaScript to instantiate two diagrams.
 
 { add <figure> caption, and make it interactive }
 

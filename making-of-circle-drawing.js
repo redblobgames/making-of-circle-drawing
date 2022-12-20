@@ -99,11 +99,10 @@ Vue.component('a-output', {
 });
 
 Vue.component('a-step', {
-    props: ['step', 'show', 'restrict'],
+    props: ['step', 'show', 'diff', 'restrict'],
     data() {
         return {
             tab: this.show ?? 'html', /* html, js */
-            showDiff: false,
             prevHtml: "",
             prevJs: "",
             currHtml: "",
@@ -120,7 +119,7 @@ Vue.component('a-step', {
             return {html: "html", js: "javascript"}[this.tab];
         },
         languageClass() {
-            let diff = this.showDiff? "diff-" : "";
+            let diff = this.diff? "diff-" : "";
             return `language-${diff}${this.lang}`;
         },
         syntaxHighlightedText() {
@@ -132,7 +131,7 @@ Vue.component('a-step', {
                 prev = extractSection(prev, new RegExp(this.restrict));
                 curr = extractSection(curr, new RegExp(this.restrict));
             }
-            if (this.showDiff) {
+            if (this.diff) {
                 return Prism.highlight(calculateDiffs(prev, curr),
                                        Prism.languages.diff,
                                        "diff-" + this.lang);

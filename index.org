@@ -153,9 +153,9 @@ With the radius, I have /two/ =<input>= elements, both set to the same variable.
 
 Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the HTML in this step.
 
-* Detail: direct manipulation
+* Direct manipulation
 :PROPERTIES:
-:CUSTOM_ID: interaction-manipulation
+:CUSTOM_ID: handle-center
 :END:
 
 Sliders are easy to implement, since the browser already supports ~<input type=range>~. When editing a geometric parameter like /position/, it's often better to directly manipulate the position by dragging it than to indirectly manipulate it by using a slider.
@@ -253,14 +253,78 @@ There are some other details to take care of. Touch events /also/ scroll the bro
 
 It works now.  [[href:/making-of/little-things/#interactivity][It could be better]]. Even though some of this code is reusable across projects, it's still a bit of work to make draggable handles. I often start with sliders and try out the diagram before implementing drag handles.
 
-* Detail: more direct manipulation
+* Reusable drag handle
 :PROPERTIES:
-:CUSTOM_ID: interaction-manipulation-2
+:CUSTOM_ID: handle-component
 :END:
 
-Dragging the circle center around is nicer than setting the two sliders. It might also be nice to adjust the circle radius that way. I think it's time to make a reusable drag handle component. Unlike the first one, 
+Dragging the circle center around is nicer than setting the two sliders. It might also be nice to adjust the circle radius that way. The simplest thing to do is to write similar code for the radius as I did for the center. But this is usually the time when I start wanting to make the dragging functionality reusable. In Vue, React, etc., this can be a "component". This component will be reusable across projects.
 
-{ refactor: draggable markers }
+Any time I'm turning multiple instances of something into a reusable abstraction (class, function, module, component, etc.), the key question is: what parts are /common/ and what parts are /differing/? The common part is that I'm going to have a =<circle>= with the pointer event handlers. The differing parts are going to be the size, color, and how the data maps to the position and back. The common parts go into the abstraction, and the differing parts go into the parameters.
+
+In the previous section I mentioned that it's common to have a two-way mapping, from original data to diagram position, and from diagram position back to data. With the circle center, that involved converting from grid coordinates to diagram coordinates by scaling and adding. But the radius will be converted differently. Vue offers a way to do this called =computed= values. Here I map =center= (grid coordinates) to =centerPosition= (diagram coordinates) using the getter, and map the other direction using the setter. It's the same code as in the previous section but now I've put the two mappings together in one place:
+
+#+begin_export html
+<figure>
+  <a-step step="10" show="js" restrict="computed:"/>
+</figure>
+#+end_export
+
+I can then refactor the previous section's code into a component that takes the position, color, and size as parameters. It'll be similar in React, Svelte, etc.:
+
+#+begin_export html
+<figure>
+  <a-step step="10" show="js" restrict="Vue.component"/>
+</figure>
+#+end_export
+
+The code is similar to what I wrote in the previous section, but the refactoring adds two things. The ~props~ are the parameters being passed /down/. The ~this.$emit~ is an update event being sent /up/. In Vue there's a [[https://v2.vuejs.org/v2/guide/components.html#Using-v-model-on-Components][shorthand syntax]] I can use if the thing being changed is named =value= and the update event is named ='input'=:
+
+#+begin_export html
+<figure>
+  <a-step step="10" restrict="drag-handle"/>
+</figure>
+#+end_export
+
+#+begin_export html
+<details>
+<summary>See the diff</summary>
+<figure>
+  <div>The common part of the html moves into the component:</div>
+  <a-step step="10" show="html" :diff="true" restrict="&lt;svg"/>
+  <div>and the common methods also move into the component:</div>
+  <a-step step="10" show="js" :diff="true" restrict="new Vue|Vue\.component"/>
+  <div>The mapping from grid coordinates to diagram coordinates are not
+     common, so they are placed outside the component, in the 
+     <code>computed</code> section.</div>
+</figure>
+</details>
+#+end_export
+
+Does the new component work? Let's try it:
+
+#+begin_export html
+<figure>
+  <a-output step="10" />
+</figure>
+#+end_export
+
+Ok, great! I now have a reusable drag handle component.
+
+I should point out that I usually do not try to make something reusable right away. I write it in a non-reusable way, get it working, then wait until I have a second (or [[https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)][third]]) need for it before I turn it into an abstraction.
+
+* Radius handle
+:PROPERTIES:
+:CUSTOM_ID: handle-radius
+:END:
+
+Let's use the new component for changing the radius.
+
+* Distance diagram
+:PROPERTIES:
+:CUSTOM_ID: distance-diagram
+:END:
+
 
 { making a second diagram with cut/paste of the html, almost change in javascript }
 
@@ -277,11 +341,18 @@ Dragging the circle center around is nicer than setting the two sliders. It migh
     border: 0;
     margin: 0;
     padding: 0;
-    box-shadow: 0 0.5px 3px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.5px 3px 1px rgb(0 0 0 / 0.3);
   }
 
+  figure { text-align: left; }
+
   details { padding: 0 1em; }
-  details p { margin: 0; padding: 0 1em; background: hsl(200, 10%, 90%); }
+  details p { margin: 0; padding: 0 1em; }
+  details[open] { 
+    background: linear-gradient(to right, hsl(200 10% 95%), white);
+    border: 2px solid hsl(200 10% 70%); 
+    border-right-width: 0; 
+  }
 
   pre { line-height: 1.25em; }
 
@@ -290,25 +361,25 @@ Dragging the circle center around is nicer than setting the two sliders. It migh
 
   /* Prism html, purple theme */
   .token.punctuation { color: #a0a090; font-weight: normal; }
-  .token.doctype-tag, .token.tag { color: hsl(0, 0%, 30%); font-weight: bold; }
-  .token.name, .token.attr-name { color: hsl(300, 30%, 50%); }
-  .token.attr-value { color: hsl(300, 10%, 50%); font-weight: normal; }
+  .token.doctype-tag, .token.tag { color: hsl(0 0% 30%); font-weight: bold; }
+  .token.name, .token.attr-name { color: hsl(300 30% 50%); }
+  .token.attr-value { color: hsl(300 10% 50%); font-weight: normal; }
 
   /* Prism javascript, blue theme, but also trying to make it match my emacs-htmlize.scss */
-  .token.keyword { color: hsl(220, 20%, 50%); font-weight: bold; }
+  .token.keyword { color: hsl(220 20% 50%); font-weight: bold; }
   .token.function { color: #268bd2; }
   .token.keyword + .token.function { font-weight: bold; }
   .token.number { color: #888888; }
   .token.string { color: #888888; }
-  .src .variable-name { color: hsl(200, 20%, 30%); font-weight: normal; }
+  .src .variable-name { color: hsl(200 20% 30%); font-weight: normal; }
 
   /* Prism javascript in html, for Vue, should be blue */
-  .value.language-javascript, .value.language-javascript .token { color: hsl(200, 30%, 50%); font-weight: normal; font-style: italic; }
-  .value.language-javascript .token.punctuation { color: hsl(200, 30%, 30%); }
+  .value.language-javascript, .value.language-javascript .token { color: hsl(200 30% 50%); font-weight: normal; font-style: italic; }
+  .value.language-javascript .token.punctuation { color: hsl(200 30% 30%); }
 
   /* Prism diffs */
-  .prefix.deleted { color: hsl(0, 50%, 50%); background: hsl(0, 30%, 90%); }
-  .prefix.inserted { color: hsl(180, 50%, 50%); background: hsl(180, 30%, 90%); }
+  .prefix.deleted { color: hsl(0 50% 50%); background: hsl(0 30% 90%); }
+  .prefix.inserted { color: hsl(180 50% 50%); background: hsl(180 30% 90%); }
 </style>
 
 <x:footer>

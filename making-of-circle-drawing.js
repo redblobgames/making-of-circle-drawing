@@ -65,7 +65,7 @@ function extractSection(input, begin, end=/[/}]/) {
 function calculateDiffs(oldText, newText) {
     let oldLines = oldText.split('\n');
     let newLines = newText.split('\n');
-    const isCommon = (aIndex, bIndex) => oldLines[aIndex] === newLines[bIndex];
+    const isCommon = (aIndex, bIndex) => oldLines[aIndex].trimStart() === newLines[bIndex].trimStart();
     let outputLines = [];
     
     let ai = 0, bi = 0

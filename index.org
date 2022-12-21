@@ -346,10 +346,23 @@ Note that there are no explicit =redraw()= calls here. In Vue, if I modify the =
 
 * Distance diagram
 :PROPERTIES:
-:CUSTOM_ID: distance-diagram
+:CUSTOM_ID: diagram-distance
 :END:
 
-The diagram shows the /output/ of the algorithm, but to explain how an algorithm works, I want diagrams that show the /concepts/ behind the algorithm. The main concept here is /distances/, so I want to make a diagram to show distances.
+The diagram shows the /output/ of the algorithm, but to explain how an algorithm works, I want diagrams that show the /concepts/ behind the algorithm. I want to add more diagrams on the page, so I need to have more =<figure>= tags, and also need to change the JavaScript to instantiate all the diagrams instead of one. Where previously I was telling Vue to look at a single element ~"#diagram"~ , I'm going to loop through the diagrams using ~for (let el of document.querySelectorAll("figure"))~ and tell Vue to run on each of them independently.
+
+#+begin_export html
+<details>
+<summary>See the diff</summary>
+<div>I'm also taking the slider out.</div>
+<figure>
+  <a-step step="12" :diff="true" restrict="&lt;figure" />
+  <a-step step="12" show="js" :diff="true" restrict="for \(let el|new Vue"/>
+</figure>
+</details>
+#+end_export
+
+Now I have two identical diagrams:
 
 #+begin_export html
 <figure>
@@ -357,17 +370,55 @@ The diagram shows the /output/ of the algorithm, but to explain how an algorithm
 </figure>
 #+end_export
 
-To implement this, I added =<text>= to each grid tile, using Vue's ~{{…}}~ to evaluate a JavaScript expression to set the text:
+Notice that because I created two separate instances of Vue, the two diagrams have their own =data= including center and radius. Sometimes I want them to be in sync and sometimes I want them independent. Here I implemented them as independent values. If I want them to be in sync, I'll create a ~new Vue()~ with only data and no diagram, and then I'll point the other diagrams at the shared data.
+
+I use copy/paste here instead of immediately building reusable abstractions because I've found that [[https://simblob.blogspot.com/2021/04/redesigning-my-circle-diagrams-part-2.html][when I build the abstraction first, it makes my diagrams worse]]. I find myself wanting to use the abstraction rather than making the best diagram for each situation. The abstractions are better when I wait to see what's in common.
+
+The main concept here is /distances/, so I want to make the second diagram show distances. To implement this, I added =<text>= to each grid tile, using Vue's ~{{…}}~ to evaluate a JavaScript expression to set the text:
 
 #+begin_export html
 <figure>
-  <a-step step="12" :diff="true" restrict="&lt;svg" />
+  <a-step step="13" :diff="true" restrict="diagram-distances" />
 </figure>
 #+end_export
 
-I haven't changed the JavaScript at all … yet. I want two diagrams on the page, not only one, so I need to have two =<figure>= tags, and also need to change the JavaScript to instantiate two diagrams.
+Here's the result.
 
-{ add <figure> caption, and make it interactive }
+#+begin_export html
+<figure>
+  <a-output step="13" />
+</figure>
+#+end_export
+
+
+#+begin_export html
+<details>
+<summary>See the diff</summary>
+<figure>
+  <a-step step="13" show="js" :diff="true" />
+</figure>
+</details>
+#+end_export
+
+Now I can copy the previous ~<figure>~ and paste it to make a second one, this time with the ~<text>~:
+
+#+begin_export html
+<figure>
+  <a-step step="13" :diff="true" restrict="&lt;figure" />
+</figure>
+#+end_export
+
+Here's the result.
+
+#+begin_export html
+<figure>
+  <a-output step="13" />
+</figure>
+#+end_export
+
+Notice that because I created two separate instances of Vue, the two diagrams have their own =data= including center and radius. Sometimes I want them to be in sync and sometimes I want them independent. Here I implemented them as independent values. If I want them to be in sync, I'll create a ~new Vue()~ with only data and no diagram, and then I'll point the other diagrams at the shared data.
+
+I use copy/paste here instead of immediately building reusable abstractions because I've found that [[https://simblob.blogspot.com/2021/04/redesigning-my-circle-diagrams-part-2.html][when I build the abstraction first, it makes my diagrams worse]] because I find myself wanting to use the abstraction rather than making the best diagram for each situation. I can add those abstractions later if needed.
 
 { global: there's some css I haven't explained; should it go into the individual pages }
 
@@ -397,12 +448,13 @@ I haven't changed the JavaScript at all … yet. I want two diagrams on the page
   .language-html, .language-handlebars, .language-javascript { font-size: 1rem; }
 
   /* Prism html, purple theme */
-  .token.punctuation { color: hsl(300 10% 60%); font-weight: normal; }
+  :is(.language-html,.template-string) .token.punctuation { color: hsl(300 10% 60%); font-weight: normal; }
   .token.doctype-tag, .token.tag { color: hsl(300 30% 40%); font-weight: bold; }
   .token.name, .token.attr-name { color: hsl(300 30% 50%); font-weight: normal; }
   .token.attr-value { color: hsl(300 10% 50%); }
 
   /* Prism javascript, blue theme, but also trying to make it match my emacs-htmlize.scss */
+  .language-javascript .token.punctuation { color: hsl(200 10% 60%); }
   .src .type, .src .keyword, .token.keyword { color: hsl(200 20% 40%); font-weight: bold; }
   .src .function-name, .token.function { color: hsl(200 50% 40%); }
   .token.keyword + .token.function { font-weight: bold; }
@@ -412,7 +464,6 @@ I haven't changed the JavaScript at all … yet. I want two diagrams on the page
 
   /* Prism javascript in html, for Vue, should be blue */
   .value.language-javascript, .value.language-javascript .token { color: hsl(200 30% 50%); font-weight: normal; font-style: italic; }
-  .value.language-javascript .token.punctuation { color: hsl(200 30% 30%); }
 
   .token.handlebars > :is(:first-child, :last-child) { color: black; }
   .token.handlebars > :not(:is(:first-child, :last-child)) { color: hsl(200 30% 50%); font-style: italic; }

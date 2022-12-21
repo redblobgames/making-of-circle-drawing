@@ -41,7 +41,7 @@ Vue.component('drag-handle', {
                  @pointerdown="pointerDown"
                  @pointerup="pointerUp"
                  @pointercancel="pointerUp"
-                 @pointermove="pointerMove"/>`,
+                 @pointermove="pointerMove" />`,
     data: () => ({dragging: false}),
     methods: {
         pointerDown(event) {

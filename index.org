@@ -54,7 +54,7 @@ That's plain HTML+SVG. I could've created that SVG with an interactive editor bu
 </figure>
 #+end_export
 
-How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create the =<rect>= for each element in =positions=. I make an array =positions= that contains all the x,y values I want on the grid, and then Vue will make one =<rect>= for each. The ~:x=~ syntax means it's setting the =x= attribute, but will compute it using a Javascript expression like =x * scale=.
+How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create the =<rect>= for each element in =positions=. I make an array =positions= that contains all the =q=, =r= values I want on the grid, and then Vue will make one =<rect>= for each. The ~:x=~ syntax means it's setting the =x= attribute, but will compute it using a Javascript expression like =q * scale=. I often use =q=, =r= for the /grid/ coordinates and =x=, =y= for the /diagram/ (pixel) coordinates to reduce the chances of mixing them up.
 
 In React, I'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte I'd use ~#{each … in positions}~. In Lit I'd use ~${repeat(positions, …)}~. These libraries have a way to loop over arrays, but they differ in the details. I'm showing Vue on this page but the concepts are similar across these libraries.
 
@@ -180,7 +180,7 @@ So far it's in the SVG but there's no behavior. Let's add some behavior to it:
 </figure>
 #+end_export
 
-Here's where it gets tricky. To go from the =center= in grid coordinates to a position in the diagram, I added =1/2= and then multiplied by =scale=. But that's in SVG coordinates. The browser then changed the SVG coordinates into screen coordinates. Here the =event= comes to us in screen coordinates. I need to reverse that:
+Here's where it gets tricky. To go from the =center= in grid coordinates to a position in the diagram, I added =1/2= and then multiplied by =scale=. But that's in SVG coordinates. In almost all cases I can work in the SVG coordinates, but mouse events come in screen coordinates, so there's an extra step to convert that to SVG coordinates:
 
 1. Convert screen coordinates to SVG coordinates, using a helper function.
 2. Convert SVG coordinates to grid coordinates: I divide by =scale= and then subtract =1/2=.

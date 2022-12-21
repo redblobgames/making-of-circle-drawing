@@ -9,8 +9,8 @@
   <body>
     <figure id="diagram">
       <svg viewBox="0 0 550 220">
-        <rect v-for="{x,y} in positions"
-              :x="x * scale" :y="y * scale"
+        <rect v-for="{q, r} in positions"
+              :x="q * scale" :y="r * scale"
               :width="scale" :height="scale"
               fill="white" stroke="gray" />
       </svg>

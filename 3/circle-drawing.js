@@ -1,12 +1,12 @@
 import Vue from '../vue.v2.esm.browser.js';
 
-const gridWidth = 25;
-const gridHeight = 10;
+const gridCols = 25;
+const gridRows = 10;
 let positions = [];
 
-for (let x = 0; x < gridWidth; x++) {
-    for (let y = 0; y < gridHeight; y++) {
-        positions.push({x, y});
+for (let q = 0; q < gridCols; q++) {
+    for (let r = 0; r < gridRows; r++) {
+        positions.push({q, r});
     }
 }
                
@@ -14,8 +14,8 @@ new Vue({
     el: "#diagram",
     data: {
         scale: 22,
-        gridWidth,
-        gridHeight,
+        gridCols,
+        gridRows,
         positions,
     },
 });

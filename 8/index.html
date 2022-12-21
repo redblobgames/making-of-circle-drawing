@@ -9,26 +9,26 @@
   <body>
     <figure id="diagram">
       <svg viewBox="0 0 550 220">
-        <rect v-for="{x,y} in positions"
-              :x="x * scale + 1/2" :y="y * scale + 1/2"
+        <rect v-for="{q, r} in positions"
+              :x="q * scale + 1/2" :y="r * scale + 1/2"
               :width="scale-1" :height="scale-1"
-              :fill="insideCircle(center, {x, y}, radius)
+              :fill="insideCircle(center, {q, r}, radius)
                      ? 'hsl(0, 30%, 60%)'
                      : 'hsl(250, 10%, 93%)'"
         />
         <circle fill="yellow"
                 @pointermove="moveCenter"
-                :r="scale * 0.4"
-                :cx="scale * (center.x + 1/2)"
-                :cy="scale * (center.y + 1/2)" />
+                :r="0.4 * scale"
+                :cx="(center.q + 1/2) * scale"
+                :cy="(center.r + 1/2) * scale" />
       </svg>
       <label>
-        x = <input v-model.number="center.x"
-                   type="range" min="0" :max="gridWidth-1" />
+        col = <input v-model.number="center.q"
+                   type="range" min="0" :max="gridCols-1" />
       </label>
       <label>
-        y = <input v-model.number="center.y"
-                   type="range" min="0" :max="gridHeight-1" />
+        row = <input v-model.number="center.r"
+                   type="range" min="0" :max="gridRows-1" />
       </label>
       <label>
         radius =

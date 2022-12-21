@@ -1,19 +1,19 @@
 import Vue from '../vue.v2.esm.browser.js';
 
-const gridWidth = 25;
-const gridHeight = 10;
+const gridCols = 25;
+const gridRows = 10;
 let positions = [];
 
-for (let x = 0; x < gridWidth; x++) {
-    for (let y = 0; y < gridHeight; y++) {
-        positions.push({x, y});
+for (let q = 0; q < gridCols; q++) {
+    for (let r = 0; r < gridRows; r++) {
+        positions.push({q, r});
     }
 }
 
 function insideCircle(center, tile, radius) {
-    let dx = center.x - tile.x,
-        dy = center.y - tile.y;
-    let distance = Math.sqrt(dx*dx + dy*dy);
+    let dq = center.q - tile.q,
+        dr = center.r - tile.r;
+    let distance = Math.sqrt(dq*dq + dr*dr);
     return distance <= radius;
 }
 
@@ -21,10 +21,10 @@ new Vue({
     el: "#diagram",
     data: {
         scale: 22,
-        gridWidth,
-        gridHeight,
+        gridCols,
+        gridRows,
         positions,
-        center: {x: 5, y: 4},
+        center: {q: 5, r: 4},
         radius: 4,
     },
     methods: {

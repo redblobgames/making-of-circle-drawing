@@ -1,12 +1,12 @@
 import Vue from '../vue.v2.esm.browser.js';
 
-const gridWidth = 25;
-const gridHeight = 10;
+const gridCols = 25;
+const gridRows = 10;
 let positions = [];
 
-for (let x = 0; x < gridWidth; x++) {
-    for (let y = 0; y < gridHeight; y++) {
-        positions.push({x, y});
+for (let q = 0; q < gridCols; q++) {
+    for (let r = 0; r < gridRows; r++) {
+        positions.push({q, r});
     }
 }
 
@@ -15,9 +15,9 @@ function clamp(value, lo, hi) {
 }
 
 function insideCircle(center, tile, radius) {
-    let dx = center.x - tile.x,
-        dy = center.y - tile.y;
-    let distance = Math.sqrt(dx*dx + dy*dy);
+    let dq = center.q - tile.q,
+        dr = center.r - tile.r;
+    let distance = Math.sqrt(dq*dq + dr*dr);
     return distance <= radius;
 }
 
@@ -37,10 +37,10 @@ new Vue({
     el: "#diagram",
     data: {
         scale: 22,
-        gridWidth,
-        gridHeight,
+        gridCols,
+        gridRows,
         positions,
-        center: {x: 5, y: 4},
+        center: {q: 5, r: 4},
         radius: 4,
         dragging: false,
     },
@@ -56,10 +56,10 @@ new Vue({
         moveCenter(event) {
             if (!this.dragging) return;
             let {x, y} = convertPixelToSvgCoord(event);
-            x = Math.round(x / this.scale - 1/2);
-            y = Math.round(y / this.scale - 1/2);
-            this.center.x = clamp(x, 0, this.gridWidth-1);
-            this.center.y = clamp(y, 0, this.gridHeight-1);
+            let q = Math.round(x / this.scale - 1/2);
+            let r = Math.round(y / this.scale - 1/2);
+            this.center.q = clamp(q, 0, this.gridCols-1);
+            this.center.r = clamp(r, 0, this.gridRows-1);
         },
         
         // export these for use from the html template

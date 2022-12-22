@@ -97,8 +97,7 @@ for (let el of document.querySelectorAll("figure")) {
                 set({x, y}) {
                     let distance = Math.hypot(x - this.centerPosition.x,
                                               y - this.centerPosition.y);
-                    let radius = Math.round(distance / this.scale);
-                    this.radius = clamp(radius, 1, 8);
+                    this.radius = clamp(distance / this.scale, 1, 8);
                 },
             },
         },

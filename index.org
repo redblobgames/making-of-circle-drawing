@@ -391,34 +391,68 @@ Here's the result.
 #+end_export
 
 
+* Detail: appearance
+:PROPERTIES:
+:CUSTOM_ID: detail-appearance
+:END:
+
+I'm going to focus on the second diagram for a bit. The black text on red squares is a bit hard to read. I can change it to white but only when the square is red. The logic is starting to feel duplicated, and I'm wanting to refactor it, but I will wait a bit longer.
+
 #+begin_export html
 <details>
 <summary>See the diff</summary>
 <figure>
-  <a-step step="13" show="js" :diff="true" />
+  <a-step step="14" :diff="true" restrict="diagram-distance" />
 </figure>
 </details>
 #+end_export
 
-Now I can copy the previous ~<figure>~ and paste it to make a second one, this time with the ~<text>~:
+The text labels take a bit too much space when the distance goes over 10. I can shrink the text the text a little bit by reducing precision. The logic for this is a bit too much to put in the HTML, so I moved it into a method. Another option would be to reduce the font size as the distance increases.
 
 #+begin_export html
 <figure>
-  <a-step step="13" :diff="true" restrict="&lt;figure" />
+  <a-step step="14" show="js" restrict="distanceLabel" />
 </figure>
 #+end_export
 
-Here's the result.
+The result is looking a little better.
 
 #+begin_export html
 <figure>
-  <a-output step="13" />
+  <a-output step="14" />
 </figure>
 #+end_export
 
-Notice that because I created two separate instances of Vue, the two diagrams have their own =data= including center and radius. Sometimes I want them to be in sync and sometimes I want them independent. Here I implemented them as independent values. If I want them to be in sync, I'll create a ~new Vue()~ with only data and no diagram, and then I'll point the other diagrams at the shared data.
+* Detail: measure line
+:PROPERTIES:
+:CUSTOM_ID: detail-measure-line
+:END:
 
-I use copy/paste here instead of immediately building reusable abstractions because I've found that [[https://simblob.blogspot.com/2021/04/redesigning-my-circle-diagrams-part-2.html][when I build the abstraction first, it makes my diagrams worse]] because I find myself wanting to use the abstraction rather than making the best diagram for each situation. I can add those abstractions later if needed.
+* Detail: caption
+:PROPERTIES:
+:CUSTOM_ID: detail-figure-caption
+:END:
+
+* Clean up code
+:PROPERTIES:
+:CUSTOM_ID: abstractions
+:END:
+
+Earlier I said that I find that I make better diagrams if I start with copy/paste and work on the diagram before I try to build abstractions. At this point I can see the two diagrams and can factor the common parts into a component. The main thing that's in common but not yet abstracted is the grid. Let's create a grid component:
+
+
+
+* Bounding box diagram
+
+* Introductory diagram
+
+* Appendix: alternatives
+
+- When to refactor?
+- Why not vanilla JS, using innerHTML?
+- Why not d3?
+- Why not React?
+- Why not Svelte, or others?
 
 { global: there's some css I haven't explained; should it go into the individual pages }
 
@@ -480,6 +514,6 @@ I use copy/paste here instead of immediately building reusable abstractions beca
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 20 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 21 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

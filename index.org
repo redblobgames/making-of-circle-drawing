@@ -423,15 +423,43 @@ The result is looking a little better.
 </figure>
 #+end_export
 
-* Detail: measure line
+But is it, really? No! ([[https://simblob.blogspot.com/2021/04/redesigning-my-circle-diagrams-part-1.html][I didn't realize this for over a year after publishing]])
+
+What is the /purpose/ of this diagram? I'm trying to show /distances/. I want to distinguish the distances inside the circle from the ones outside the circle. But I don't actually need to show the /output/ of the algorithm here. Do I need the red at all? I was using the red because the first diagram did. The red is a bold color and draws the reader's attention. If distances are the main idea here, then distances should draw the reader's attention.
+
+So let's design this diagram around /distances/.
+
+1. Show the distances in two different colors for inside and outside the circle.
+2. Show the circle itself to see what we're approximating.
+3. Reduce the empty grid space and give more space to the circle itself.
+4. Make sure the drag handles are visible against the new background colors, and change the mouse pointer shape to let the reader know those objects are draggable.
+
+#+begin_export html
+<details>
+<summary>See the diff</summary>
+<figure>
+  <a-step step="15" :diff="true" restrict="diagram-distance" />
+  <a-step step="15" show="js" :diff="true" />
+</figure>
+</details>
+#+end_export
+
+#+begin_export html
+<figure>
+  <a-output step="15" />
+</figure>
+#+end_export
+
+I think this design without the red helps the reader focus on distances.
+
+* Radius display
 :PROPERTIES:
-:CUSTOM_ID: detail-measure-line
+:CUSTOM_ID: radius
 :END:
 
-* Detail: caption
-:PROPERTIES:
-:CUSTOM_ID: detail-figure-caption
-:END:
+The algorithm is about comparing distances to the radius. The current design shows the distances.
+After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption.
+
 
 * Clean up code
 :PROPERTIES:
@@ -514,6 +542,6 @@ Earlier I said that I find that I make better diagrams if I start with copy/past
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 21 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 22 Dec 2022<!-- hhmts end -->
 </x:footer>
 #+end_export

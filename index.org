@@ -402,7 +402,7 @@ I'm going to focus on the second diagram for a bit. The black text on red square
 <details>
 <summary>See the diff</summary>
 <figure>
-  <a-step step="14" :diff="true" restrict="diagram-distance" />
+  <a-step step="14" :diff="true" restrict="diagram-distances" />
 </figure>
 </details>
 #+end_export
@@ -438,7 +438,7 @@ So let's design this diagram around /distances/.
 <details>
 <summary>See the diff</summary>
 <figure>
-  <a-step step="15" :diff="true" restrict="diagram-distance" />
+  <a-step step="15" :diff="true" restrict="diagram-distances" />
   <a-step step="15" show="js" :diff="true" />
 </figure>
 </details>
@@ -450,23 +450,39 @@ So let's design this diagram around /distances/.
 </figure>
 #+end_export
 
-I think this design without the red helps the reader focus on distances.
+I think this design without the red areas helps the reader focus on distances.
+
+There's a bit more I want to do with the distance diagram but I'm wanting to refactor. I try to wait before I refactor but I think the repeated ~v-for~ loop and the repeated ~insideCircle()~ calls could be simplified. I'm using SVG ~<g>~ to *g*roup the elements together so that I can use a single ~v-for~ loop. The =transform= on this will position elements on the center of the tile. Then I'm calling ~insideCircle()~ just once, and assigning the result to a =class=:
+
+#+begin_export html
+<figure>
+  <a-step step="16" :diff="true" restrict="id=.diagram-distances" />
+</figure>
+#+end_export
+
+I can use that =class= with CSS rules to apply the color and font changes:
+
+#+begin_export html
+<figure>
+  <a-step step="16" :diff="true" restrict="style" />
+</figure>
+#+end_export
+
+There's more refactoring that could be done but it'll wait.
 
 * Radius display
 :PROPERTIES:
-:CUSTOM_ID: radius
+:CUSTOM_ID: display-radius
 :END:
 
 The algorithm is about comparing distances to the radius. The current design shows the distances.
 After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption.
 
-
-* Clean up code
-:PROPERTIES:
-:CUSTOM_ID: abstractions
-:END:
-
-Earlier I said that I find that I make better diagrams if I start with copy/paste and work on the diagram before I try to build abstractions. At this point I can see the two diagrams and can factor the common parts into a component. The main thing that's in common but not yet abstracted is the grid. Let's create a grid component:
+#+begin_export html
+<figure>
+  <a-output step="17" />
+</figure>
+#+end_export
 
 
 

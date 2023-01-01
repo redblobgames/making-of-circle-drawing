@@ -21,7 +21,7 @@ function insideCircle(center, tile, radius) {
  * space (within the svg, honoring responsive resizing, width/height,
  * and viewBox */
 function convertPixelToSvgCoord(event) {
-    const svg = event.target.ownerSVGElement;
+    const svg = event.currentTarget.ownerSVGElement;
     let p = svg.createSVGPoint();
     p.x = event.clientX;
     p.y = event.clientY;

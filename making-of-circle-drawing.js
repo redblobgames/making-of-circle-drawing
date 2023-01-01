@@ -11,7 +11,7 @@ import {Prism, Diff} from './_build/lib.js';
 
 /* Highlight Vue attributes as containing javascript values */
 Prism.languages.markup.tag.addAttribute(
-    /(?:v-|:|@)[-.a-zA-Z]+/.source,
+    /(?:v-|:|@)[-.a-zA-Z0-9]+/.source,
     'javascript'
 );
 /* Highlight Vue template inside js; based on prism-js-templates.js */

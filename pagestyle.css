@@ -36,6 +36,9 @@ figure {
     margin: 0;
     padding: 0.5em 1em;
 }
+figcaption {
+    text-align: center;
+}
 svg, figure > label {
     display: block;
 }

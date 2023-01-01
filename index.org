@@ -1,6 +1,7 @@
 #+title: Making of: Circle drawing tutorial
 #+date: <2022-11-28 Mon>
 #+vue: t
+#+draft: t
 
 People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use Vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v2]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
 
@@ -9,6 +10,8 @@ People ask me how I write my interactive tutorials. The first few years, I used 
 { TODO: diagram showing the final result }
 </figure>
 #+end_export
+
+The style I use here /relies heavily on knowledge of SVG/. I know SVG pretty well so I use a style that builds on it. If SVG isn't your preference, you may find that you want to use an entirely different style of implementing diagrams. This page documents how I write my pages, but there are many different ways to make [[https://explorabl.es/][interactive pages]] and I'm not saying this is the only or best way. It happens to be what works for me.
 
 * Web page
 :PROPERTIES:
@@ -201,7 +204,7 @@ For the second, I use this event handler, which gets called by ~@pointermove="mo
 </figure>
 #+end_export
 
-This kind of two-way mapping from data to diagram and back is common, and I occasionally go overboard and [[href:articles/curved-paths/making-of.html][write a library to handle it]]. But in most cases I write it manually.
+This kind of two-way mapping from data to diagram and back is common, and I occasionally go overboard and [[href:/articles/curved-paths/making-of.html][write a library to handle it]]. But in most cases I write it manually.
 
 If you try the demo you'll notice it doesn't work that well. There are three problems here:
 
@@ -468,7 +471,7 @@ I can use that =class= with CSS rules to apply the color and font changes:
 </figure>
 #+end_export
 
-There's more refactoring that could be done but it'll wait.
+There's more refactoring that could be done. For example, I could make that ~<g>~ into a component that has the rect and text inside of it.
 
 * Radius display
 :PROPERTIES:
@@ -476,7 +479,33 @@ There's more refactoring that could be done but it'll wait.
 :END:
 
 The algorithm is about comparing distances to the radius. The current design shows the distances.
-After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption.
+After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption. To implement the measure line, I want to use arrows. In SVG, I use [[href:/making-of/little-things/#arrows][markers]]. It'll be an arrow pointing left, the measurement, and an arrow pointing right. I adjust the starting position of the line to give a little room for the label. It might be better to calculate this but [[https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it][YAGNI]] says I shouldn't worry about it.
+
+The SVG is a little messy, and I could clean it up later by writing a reusable component:
+
+#+begin_export html
+<figure>
+  <a-step step="17" restrict="&lt;line" />
+</figure>
+#+end_export
+
+It relies on the line positions, which I calculate here:
+
+#+begin_export html
+<figure>
+  <a-step step="17" show="js" restrict="measureLine" />
+</figure>
+#+end_export
+
+The =<figure>= element has an optional =<figcaption>= description of the figure, and I can generate that dynamically here:
+
+#+begin_export html
+<figure>
+  <a-step step="17" restrict="figcaption" />
+</figure>
+#+end_export
+
+And here's the output:
 
 #+begin_export html
 <figure>
@@ -484,7 +513,9 @@ After removing the radius slider, there's no place that shows the actual radius.
 </figure>
 #+end_export
 
+In the previous section I removed the red because it was attached to the algorithm output, and I didn't want the output to be the main focus. Here I've added red back to show the radius. That's the number I want the reader to focus on. There are plenty more details that can be added to this diagram; compare to the [[href:/grids/circle-drawing/#distance-test][original diagram]].
 
+Writing all this SVG by hand seems a little bit tedious. I've considered diagramming tools like [[https://penrose.cs.cmu.edu/][Penrose]], but I haven't found anything that fits my needs. I've also considered writing my own libraries but my current strategy is to have many simple one-offs instead of one general-purpose diagramming tool with all the features.
 
 * Bounding box diagram
 
@@ -496,6 +527,7 @@ After removing the radius slider, there's no place that shows the actual radius.
 - Why not vanilla JS, using innerHTML?
 - Why not d3?
 - Why not React?
+- Why not Vue 3?
 - Why not Svelte, or others?
 
 { global: there's some css I haven't explained; should it go into the individual pages }
@@ -558,6 +590,6 @@ After removing the radius slider, there's no place that shows the actual radius.
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 22 Dec 2022<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 01 Jan 2023<!-- hhmts end -->
 </x:footer>
 #+end_export

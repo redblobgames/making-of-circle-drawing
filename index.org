@@ -481,7 +481,7 @@ There's more refactoring that could be done. For example, I could make that ~<g>
 The algorithm is about comparing distances to the radius. The current design shows the distances.
 After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption. To implement the measure line, I want to use arrows. In SVG, I use [[href:/making-of/little-things/#arrows][markers]]. It'll be an arrow pointing left, the measurement, and an arrow pointing right. I adjust the starting position of the line to give a little room for the label. It might be better to calculate this but [[https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it][YAGNI]] says I shouldn't worry about it.
 
-The SVG is a little messy, and I could clean it up later by writing a reusable component:
+The SVG is a little messy, and I could clean it up later by writing a reusable component to draw an arrow:
 
 #+begin_export html
 <figure>
@@ -518,6 +518,32 @@ In the previous section I removed the red because it was attached to the algorit
 Writing all this SVG by hand seems a little bit tedious. I've considered diagramming tools like [[https://penrose.cs.cmu.edu/][Penrose]], but I haven't found anything that fits my needs. I've also considered writing my own libraries but my current strategy is to have many simple one-offs instead of one general-purpose diagramming tool with all the features.
 
 * Bounding box diagram
+:PROPERTIES:
+:CUSTOM_ID: diagram-bounding-box
+:END:
+
+The [[href:/grids/circle-drawing/#bounding-box][next diagram on the page]] started out as a variant of the previous one. When making two variants of a diagram, the easiest thing is to copy/paste, even though we've been taught not to. The disadvantage of copy/paste is that if you want to change both diagrams then you have to make the changes twice. The advantage of copy/paste though is that it's easier to make the diagrams different. Since I don't /know/ ahead of time that these two diagrams should be the same, I've had better results by letting the two diagrams evolve separately, and /then/ looking for similarities to refactor.
+
+The focus of this page is the bounding box. Let's highlight the bounding box. Outside the bounding box the algorithm doesn't calculate distances, so let's remove those distances from the diagram.
+
+#+begin_export html
+<figure>
+  <a-output step="18" />
+</figure>
+#+end_export
+
+
+#+begin_export html
+<details>
+<summary>I implemented this by adding a <code>bbox</code> bounding box computed value, and then applying a different style to tiles outside the bounding box. See the diff</summary>
+<figure>
+  <a-step step="18" show="js" :diff="true" restrict="bbox\(\)|insideBounds" />
+  <a-step step="18" :diff="true" restrict="&lt;svg" />
+</figure>
+</details>
+#+end_export
+
+I also want to add measure lines labeling the bounding box. Since I now have multiple arrows to show, I'm going to make that a component. Unfortunately SVG doesn't allow dynamically coloring the arrowheads so I would need a new =<defs>= section for each color, and it's hard to make a truly reusable component here. Fortunately in this diagram all the arrowheads are the same color, and I can make a component for this page.
 
 * Introductory diagram
 
@@ -590,6 +616,6 @@ Writing all this SVG by hand seems a little bit tedious. I've considered diagram
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 01 Jan 2023<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 02 Jan 2023<!-- hhmts end -->
 </x:footer>
 #+end_export

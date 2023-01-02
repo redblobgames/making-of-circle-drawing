@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Circle drawing</title>
+    <link rel="stylesheet" href="../pagestyle.css">
+    <script type="module" src="circle-drawing.js"></script>
+    <style>
+        #diagram-bounding-box .grid rect               { fill: white; stroke: hsl(250 10% 97%); stroke-width: 0.05px; }
+        #diagram-bounding-box .grid.inside-bounds rect { fill: hsl(250 10% 93%); stroke: white; }
+        #diagram-bounding-box .grid.inside-circle rect { fill: hsl(60 10% 93%); }
+        #diagram-bounding-box .grid text               { fill: none; }
+        #diagram-bounding-box .grid.inside-bounds text { fill: hsl(250 20% 50%); }
+        #diagram-bounding-box .grid.inside-circle text { fill: hsl(60 40% 20%); font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <figure id="diagram-bounding-box">
+      <svg :view-box.camel="`-0.5 -0.5 ${gridCols} ${gridRows}`">
+        <defs>
+          <marker id="arrowhead" viewBox="0 0 10 10" 
+                  refX="7" refY="5" markerUnits="strokeWidth"
+                  markerWidth="4" markerHeight="3" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" />
+          </marker>
+        </defs>
+        <g v-for="{q, r} in positions"
+           :transform="`translate(${q},${r})`"
+           :class="{grid: true,
+                  'inside-circle': insideCircle(center, {q, r}, radius),
+                  'inside-bounds': insideBounds({q, r})}">
+          <rect :x="-1/2" :y="-1/2" :width="1" :height="1" />
+          <text text-anchor="middle" :font-size="0.45" :dy="0.15">
+            {{distanceLabel(q, r)}}
+          </text>
+        </g>
+        <rect :x="bbox.left" :y="bbox.top"
+              :width="bbox.right - bbox.left"
+              :height="bbox.bottom - bbox.top"
+              fill="none" rx="0.07" stroke-width="0.05"
+              stroke="hsl(0 50% 50%)" stroke-dasharray="0.25,0.03" />
+        <circle :cx="center.q" :cy="center.r" :r="radius"
+            fill="none" stroke="hsl(60 10% 50%)" stroke-width="0.05" />
+        <drag-handle v-model="centerPosition"
+                     color="hsl(60, 100%, 90%)" :size="0.3" />
+        <drag-handle v-model="radiusPosition"
+                     color="hsl(30 100% 80%)" :size="0.2" />
+      </svg>
+      <figcaption>Circle with radius {{radius.toFixed(1)}}</figcaption>
+    </figure>
+  </body>
+</html>

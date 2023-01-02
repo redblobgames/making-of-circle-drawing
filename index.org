@@ -517,6 +517,40 @@ In the previous section I removed the red because it was attached to the algorit
 
 Writing all this SVG by hand seems a little bit tedious. I've considered diagramming tools like [[https://penrose.cs.cmu.edu/][Penrose]], but I haven't found anything that fits my needs. I've also considered writing my own libraries but my current strategy is to have many simple one-offs instead of one general-purpose diagramming tool with all the features.
 
+* Coordinate systems
+:PROPERTIES:
+:CUSTOM_ID: coordinate-systems
+:END:
+
+There are a /lot/ of ~+1/2~ and ~* scale~ expressions in the code. For example:
+
+#+begin_export html
+<figure>
+  <a-step step="17" restrict="&lt;g v-for" />
+</figure>
+#+end_export
+
+ I can clean up all these calculations by changing the coordinate system for the diagram. Instead of =0,0= being the top left of the grid and each tile being =scale= wide, I can make =0,0= the /center/ of the top left tile and each tile being =1= wide:
+
+#+begin_export html
+<figure>
+  <a-step step="18" restrict="&lt;g v-for" />
+</figure>
+#+end_export
+
+Ideally I would've made this change much earlier in the process, but sometimes I go too far before stopping to think about how to simplify things! But this change simplified things and I'm glad I made it. Use SVG / Canvas transforms to set the scale and origin to what's convenient for your diagram.
+
+#+begin_export html
+<details>
+<summary>See the diff (long)</summary>
+<div>Essentially I changed <code>scale</code> to 1 and also shifted everything by half a tile.</div>
+<figure>
+  <a-step step="18" show="js" :diff="true" restrict="^for \(let el" />
+  <a-step step="18" :diff="true" restrict="&lt;svg" />
+</figure>
+</details>
+#+end_export
+
 * Bounding box diagram
 :PROPERTIES:
 :CUSTOM_ID: diagram-bounding-box
@@ -528,7 +562,7 @@ The focus of this page is the bounding box. Let's highlight the bounding box. Ou
 
 #+begin_export html
 <figure>
-  <a-output step="18" />
+  <a-output step="19" />
 </figure>
 #+end_export
 

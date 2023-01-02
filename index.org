@@ -571,13 +571,29 @@ The focus of this page is the bounding box. Let's highlight the bounding box. Ou
 <details>
 <summary>I implemented this by adding a <code>bbox</code> bounding box computed value, and then applying a different style to tiles outside the bounding box. See the diff</summary>
 <figure>
-  <a-step step="18" show="js" :diff="true" restrict="bbox\(\)|insideBounds" />
-  <a-step step="18" :diff="true" restrict="&lt;svg" />
+  <a-step step="19" show="js" :diff="true" restrict="bbox\(\)|insideBounds" />
+  <a-step step="19" :diff="true" restrict="&lt;svg" />
 </figure>
 </details>
 #+end_export
 
-I also want to add measure lines labeling the bounding box. Since I now have multiple arrows to show, I'm going to make that a component. Unfortunately SVG doesn't allow dynamically coloring the arrowheads so I would need a new =<defs>= section for each color, and it's hard to make a truly reusable component here. Fortunately in this diagram all the arrowheads are the same color, and I can make a component for this page.
+I also want to add measure lines labeling the bounding box. I added two columns and one row to the SVG size to make room for the labels.
+
+#+begin_export html
+<figure>
+  <a-output step="20" />
+</figure>
+#+end_export
+
+#+begin_export html
+<details>
+<summary>This change was entirely in the HTML, and didn't require changing the JavaScript. It's four gray lines, four arrows, and two labels. Changes like this allows me to have multiple diagrams that share JavaScript but differ only in the configuration parmaeters. See the diff</summary>
+<figure>
+  <a-step step="20" :diff="true" />
+</figure>
+</details>
+#+end_export
+
 
 * Introductory diagram
 

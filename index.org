@@ -594,8 +594,32 @@ I also want to add measure lines labeling the bounding box. I added two columns 
 </details>
 #+end_export
 
+* Refactoring
+:PROPERTIES:
+:CUSTOM_ID: refactoring
+:END:
 
-* Introductory diagram
+I have three diagrams now. I've added things to the later diagrams that could be in the earlier ones too:
+
+- The 1 ✕ 1 tile size simplifies calculations compared to the scale ✕ scale tiles.
+- The =arrow= CSS class handles the styling of arrow lines.
+- A =<figcaption>= describes the diagram.
+- I have =.inside-circle=, =.inside-bounds= CSS classes instead of putting colors in the HTML.
+- I'm calculating the SVG =viewBox= instead of hard-coding it.
+- The svg =<defs>= section is the same among all SVGs on the page, so I can move this out into its own 0✕0 SVG. Note that if you want the defs to be different, they need to use different =id= values, because HTML =id= has to be unique on the page, not only within an SVG.
+- The CSS is fairly similar but the tile color in the first diagram is red instead of gray, so I used a more specific CSS rule to override the gray color.
+- The JavaScript code for all three diagrams is the same, so the diagrams differ only in their HTML. I can make more variants of this diagram by tweaking the HTML.
+
+#+begin_export html
+<figure>
+  <a-output step="21" />
+</figure>
+#+end_export
+
+The grid of tiles is the only thing left that might be worth factoring out of the diagram code, but it's only worth it if I'm going to make several more diagrams in this style. I won't do that here, but I did on the original page when I wanted to add several more diagrams.
+
+* Summary
+
 
 * Appendix: alternatives
 

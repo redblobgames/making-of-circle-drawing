@@ -64,7 +64,7 @@
           <line class="arrow"
                 :x1="measureLineCenter.x + 1/3" :y1="measureLineCenter.y"
                 :x2="measureLineRight.x" :y2="measureLineRight.y" />
-          <text fill="hsl(0, 50%, 50%)" text-anchor="middle"
+          <text fill="hsl(0 50% 50%)" text-anchor="middle"
                 :x="measureLineCenter.x" :y="measureLineCenter.y"
                 :font-size="0.4" font-weight="bold" :dy="0.15">
             {{radius.toFixed(1)}}
@@ -115,7 +115,7 @@
           <text text-anchor="start" :x="gridCols - 1/2" :y="bbox.bottom + 0.5 - 0.1">bottom</text>
         </g>
         
-        <drag-handle v-model="centerPosition" color="hsl(60, 100%, 90%)" :size="0.3" />
+        <drag-handle v-model="centerPosition" color="hsl(60 100% 90%)" :size="0.3" />
         <drag-handle v-model="radiusPosition" color="hsl(30 100% 80%)" :size="0.2" />
       </svg>
       <figcaption>Bounding box for circle</figcaption>

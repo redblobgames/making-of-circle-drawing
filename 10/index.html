@@ -13,8 +13,8 @@
               :x="q * scale + 1/2" :y="r * scale + 1/2"
               :width="scale-1" :height="scale-1"
               :fill="insideCircle(center, {q, r}, radius)
-                     ? 'hsl(0, 30%, 60%)'
-                     : 'hsl(250, 10%, 93%)'"
+                     ? 'hsl(0 30% 60%)'
+                     : 'hsl(250 10% 93%)'"
         />
         <drag-handle v-model="centerPosition"
                      color="yellow" :size="0.4 * scale" />

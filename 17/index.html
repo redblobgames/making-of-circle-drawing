@@ -47,13 +47,13 @@
           <line :x1="measureLineCenter.x + scale/3" :y1="measureLineCenter.y"
                 :x2="measureLineRight.x" :y2="measureLineRight.y"
                 stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)" />
-          <text fill="hsl(0, 50%, 50%)" text-anchor="middle"
+          <text fill="hsl(0 50% 50%)" text-anchor="middle"
                 :x="measureLineCenter.x" :y="measureLineCenter.y"
                 :font-size="0.4 * scale" font-weight="bold"
                 :dy="0.15 * scale">{{radius.toFixed(1)}}</text>
         </g>
         <drag-handle v-model="centerPosition"
-                     color="hsl(60, 100%, 90%)" :size="0.3 * scale" />
+                     color="hsl(60 100% 90%)" :size="0.3 * scale" />
         <drag-handle v-model="radiusPosition"
                      color="hsl(30 100% 80%)" :size="0.2 * scale" />
       </svg>

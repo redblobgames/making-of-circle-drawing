@@ -1,3 +1,6 @@
+// From https://www.redblobgames.com/making-of/circle-drawing/
+// License: CC0 https://creativecommons.org/publicdomain/zero/1.0/
+
 import Vue from '../vue.v2.esm.browser.js';
 
 const gridCols = 25;

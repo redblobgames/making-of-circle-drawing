@@ -95,7 +95,13 @@ function calculateDiffs(oldText, newText) {
 
 Vue.component('a-output', {
     props: ['step'],
-    template: `<iframe ref="iframe" :src="step+'/'" scrolling="no" @load="resizeIFrame" />`,
+    template: `<div class="output">
+                 <nav>Step {{step}}
+                    | <a target="_blank" :href="step+'/'">Open ⧉</a>
+                    | <a target="_blank" :href="'https://github.com/redblobgames/making-of-circle-drawing/tree/main/'+step+'/'">Source ⧉</a>
+                 </nav>
+                 <iframe ref="iframe" :src="step+'/'" scrolling="no" @load="resizeIFrame" />
+               </div>`,
     methods: {
         resizeIFrame() {
             let {iframe} = this.$refs;

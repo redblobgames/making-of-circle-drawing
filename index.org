@@ -1,15 +1,8 @@
 #+title: Making of: Circle drawing tutorial
 #+date: <2022-11-28 Mon>
 #+vue: t
-#+draft: t
 
 People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use Vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v2]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
-
-#+begin_export html
-<figure>
-{ TODO: diagram showing the final result }
-</figure>
-#+end_export
 
 The style I use here /relies heavily on knowledge of SVG/. I know SVG pretty well so I use a style that builds on it. If SVG isn't your preference, you may find that you want to use an entirely different style of implementing diagrams. This page documents how I write my pages, but there are many different ways to make [[https://explorabl.es/][interactive pages]] and I'm not saying this is the only or best way. It happens to be what works for me.
 
@@ -620,26 +613,36 @@ The grid of tiles is the only thing left that might be worth factoring out of th
 
 * Summary
 
+I usually start with an empty diagram and then add a bit at a time. The most obvious thing to show is the output of an algorithm, and then I let the reader change the input. It's easiest to use sliders so I'll start with those and then replace them with direct manipulation. I use bidirectional mapping between the /data/ I am trying to manipulate and the /visual/ expression of it in the diagram. I usually wait a bit to make reusable abstractions both because premature abstraction wastes time and also because I've found that making the abstractions early makes my diagrams worse. I'll even use copy/paste to avoid making an abstraction too early. After the diagram evolves, I can build abstractions for any remaining repetitive code.
 
-* Appendix: alternatives
+Even though I presented the concepts on this page with Vue, I think there are many other libraries worth considering. [[https://www.redblobgames.com/x/2014-starter-page/][I have some "starter" code]] with Vue, React, Lit, and Preact. Feel free to copy it to get started.
 
-- When to refactor?
-- Why not vanilla JS, using innerHTML?
-- Why not d3?
-- Why not React?
-- Why not Vue 3?
-- Why not Svelte, or others?
+- Would these diagrams work just as well with direct DOM manipulations? Probably. I find =innerHTML= to work reasonably well in a lot of cases. However it doesn't preserve state, so you have to be careful with sliders and draggable elements.
+- Would these diagrams work just as well with d3.js? I used to make interactive SVG diagrams with an imperative style of code (jQuery/d3.js) but now use a declarative style (Vue/React/Svelte/etc.). I've found that I write much less code, it's easier to write, and I make fewer mistakes.
+- Would it be better to use Canvas or SVG or WebGL? I pick SVG when I can. The declarative style works well with it, and the same style of code also works for the non-diagram parts of the page (text and sample code). I can attach event handlers to individual elements like the drag handle circles in these diagrams. But sometimes I need to use Canvas or WebGL, and I'll write code in an imperative style in those cases.
+- Why not React.js, Svelte, TypeScript? Since I am trying to make pages I can still edit in 20 years, [[href:/making-of/little-things/#site-build-reduce][I want to avoid a build step]], and these require a build step in practice. 
+- Really, why not React.js? Everyone uses it. I found that I prefer adding JavaScript interactivity to a document (Vue templates) instead of writing my document inside JavaScript (React JSX).  I can write SVG and HTML and then sprinkle in formulas to calculate some of the values. I also prefer Vue's /reactivity/ system over React's.
+- Why not Vue 3? I am using Vue 2 for now, in part because the build size is much smaller than Vue 3's, but also in part because Vue 3 doesn't add much that I need. I would switch if I could find a way to make it much smaller by discarding the features I don't use.
 
-{ global: there's some css I haven't explained; should it go into the individual pages }
+This page is about how I write my pages, and not a specific recommendation for which libraries /you/ should use.
 
 #+begin_export html
 <style>
-  main iframe { 
-    width: 100%; 
+  main .output { 
+    box-shadow: 0 0.5px 3px 1px rgb(0 0 0 / 0.3);
+  }
+  main .output nav {
+    background: linear-gradient(hsl(0 0% 80%), hsl(0 0% 83%));
+    border-bottom: 1px solid hsl(0 0% 70%);
+    padding: 0 1em;
+    text-align: right;
+  }
+  main .output iframe {
+    display: block;
+    width: 100%;
     border: 0;
     margin: 0;
     padding: 0;
-    box-shadow: 0 0.5px 3px 1px rgb(0 0 0 / 0.3);
   }
 
   figure { text-align: left; }

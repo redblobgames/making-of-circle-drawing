@@ -1,0 +1,6 @@
+#+title: Making of: Circle drawing
+#+date: <2023-01-01>
+
+This is the code for https://www.redblobgames.com/making-of/circle-drawing/
+
+My code for the page itself is licensed under Apache v2. The /sample/ code presented on the page (also in the subdirectories here) is CC0. [[https://github.com/vuejs/vue][Vue v2]] is MIT licensed.

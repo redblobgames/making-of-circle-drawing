@@ -1,4 +1,4 @@
-/* generic page formatting; the css specific to line drawing will be in each section */
+/* These are styles to make the page fit well into the main page */
 * {
     box-sizing: border-box;
 }
@@ -36,6 +36,9 @@ figure {
     margin: 0;
     padding: 0.5em 1em;
 }
+
+
+/* These are styles that apply to the content of the page. They should belong on the html pages instead of here */
 figcaption {
     text-align: center;
 }

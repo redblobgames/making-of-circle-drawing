@@ -21,7 +21,7 @@ body > div, body > p, h1, h2 {
     margin-bottom: 0.5em;
 }
 header, footer {
-    background-color: hsl(60 20% 80%);
+    background-color: hsl(0 20% 80%);
     padding: 0.5em;
 }
 footer {

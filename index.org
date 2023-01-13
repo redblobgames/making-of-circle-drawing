@@ -20,9 +20,11 @@ I usually start with a basic web page template that includes scripts, footers, a
 </figure>
 #+end_export
 
-I attach an ~id=~ to an html element so that I can get to it from Javascript. Sometimes I'll attach it to the ~<svg>~ and sometimes to a ~<div>~ or ~<figure>~ outside the svg. For this page, I want interactive elements outside the svg so I'm putting the id on the ~<figure>~.
+I attach an ~id=~ to an html element so that I can get to it from JavaScript. Sometimes I'll attach it to the ~<svg>~ and sometimes to a ~<div>~ or ~<figure>~ outside the diagram. For this page, I want interactive elements outside the SVG diagram so I'm putting the id on the ~<figure>~.
 
-I'll omit the header and footer from the rest of the examples. Click the filename on the upper right to see the entire page up to that point. Using a ~viewBox~ on ~<svg>~ tells it the coordinate system to for drawing. We can use that to keep a consistent coordinate system even if the diagram is resized.
+I use a ~viewBox~ on ~<svg>~ to tell it the coordinate system I want for drawing. I can use that to keep a consistent coordinate system even if the diagram is resized. I've hard-coded it for now but later on I'll show how to calculate it dynamically.
+
+For the rest of the page I'll focus on the diagrams and won't show the header, footer, and text of the page.
 
 * Diagram
 :PROPERTIES:
@@ -147,7 +149,7 @@ In Vue, React, etc. the "source of truth" is a JavaScript value, and the HTML el
 
 With the radius, I have /two/ =<input>= elements, both set to the same variable. That way I can edit either way (as a slider or an input box).
 
-Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the HTML in this step.
+Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
 
 * Direct manipulation
 :PROPERTIES:

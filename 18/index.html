@@ -42,14 +42,14 @@
             :r="radius"
             fill="none" stroke="hsl(60 10% 50%)" stroke-width="0.05" />
         <g class="measure-line">
-          <line :x1="measureLineCenter.x - 1/3" :y1="measureLineCenter.y"
-                :x2="measureLineLeft.x" :y2="measureLineLeft.y"
+          <line :x1="center.q + radius/2 - 1/3" :y1="center.r - 1/2"
+                :x2="center.q" :y2="center.r - 1/2"
                 stroke="black" stroke-width="0.08" marker-end="url(#arrowhead)" />
-          <line :x1="measureLineCenter.x + 1/3" :y1="measureLineCenter.y"
-                :x2="measureLineRight.x" :y2="measureLineRight.y"
+          <line :x1="center.q + radius/2 + 1/3" :y1="center.r - 1/2"
+                :x2="center.q + radius" :y2="center.r - 1/2"
                 stroke="black" stroke-width="0.08" marker-end="url(#arrowhead)" />
           <text fill="hsl(0 50% 50%)" text-anchor="middle"
-                :x="measureLineCenter.x" :y="measureLineCenter.y"
+                :x="center.q + radius/2" :y="center.r - 1/2"
                 :font-size="0.4" font-weight="bold"
                 :dy="0.15">{{radius.toFixed(1)}}</text>
         </g>

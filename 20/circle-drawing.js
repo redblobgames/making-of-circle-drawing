@@ -103,24 +103,6 @@ for (let el of document.querySelectorAll("figure")) {
                     this.radius = clamp(distance, 1, 8);
                 },
             },
-            measureLineLeft() {
-                return {
-                    x: this.centerPosition.x,
-                    y: this.centerPosition.y - 1/2
-                };
-            },
-            measureLineRight() {
-                return {
-                    x: this.radiusPosition.x,
-                    y: this.radiusPosition.y - 1/2
-                };
-            },
-            measureLineCenter() {
-                return {
-                    x: (this.measureLineLeft.x + this.measureLineRight.x) / 2,
-                    y: (this.measureLineLeft.y + this.measureLineRight.y) / 2
-                };
-            },
             bbox() {
                 return {
                     left:   Math.ceil(this.center.q - this.radius) - 0.5,

@@ -533,7 +533,15 @@ There are a /lot/ of ~+1/2~ and ~* scale~ expressions in the code. For example:
 </figure>
 #+end_export
 
-Ideally I would've made this change much earlier in the process, but sometimes I go too far before stopping to think about how to simplify things! But this change simplified things and I'm glad I made it. Use SVG / Canvas transforms to set the scale and origin to what's convenient for your diagram.
+This simplification also means I no longer need the helper functions for =measureLineCenter=, =measureLineLeft=, =measureLineRight=:
+
+#+begin_export html
+<figure>
+  <a-step step="18" :diff="true" restrict="class=.measure-line" />
+</figure>
+#+end_export
+
+Ideally I would've made this change much earlier in the process, but sometimes I go too far before stopping to think about how to simplify things! But this change simplified things and I'm glad I made it. 
 
 #+begin_export html
 <details>
@@ -545,6 +553,8 @@ Ideally I would've made this change much earlier in the process, but sometimes I
 </figure>
 </details>
 #+end_export
+
+Use SVG / Canvas transforms to set the scale and origin to what's convenient for your diagram.
 
 * Bounding box diagram
 :PROPERTIES:

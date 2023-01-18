@@ -36,15 +36,3 @@ figure {
     margin: 0;
     padding: 0.5em 1em;
 }
-
-
-/* These are styles that apply to the content of the page. They should belong on the html pages instead of here */
-figcaption {
-    text-align: center;
-}
-svg, figure > label {
-    display: block;
-}
-input {
-    vertical-align: bottom;
-}

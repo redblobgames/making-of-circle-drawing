@@ -94,9 +94,9 @@ function calculateDiffs(oldText, newText) {
 
 
 Vue.component('a-output', {
-    props: ['step'],
+    props: ['step', 'skip-nav'],
     template: `<div class="output">
-                 <nav>Step {{step}}
+                 <nav v-if="!skipNav">Step {{step}}
                     | <a target="_blank" :href="step+'/'">Open ⧉</a>
                     | <a target="_blank" :href="'https://github.com/redblobgames/making-of-circle-drawing/tree/main/'+step+'/'">Source ⧉</a>
                  </nav>

@@ -3,4 +3,6 @@
 
 This is the code for https://www.redblobgames.com/making-of/circle-drawing/
 
-My code for the page itself is licensed under Apache v2. The /sample/ code presented on the page (also in the subdirectories here) is CC0. [[https://github.com/vuejs/vue][Vue v2]] is MIT licensed.
+Some images made with [[https://tldraw.com/][tldraw]].
+
+My code for the page itself is licensed under Apache v2. The /sample/ code presented on the page (also in the subdirectories here) is CC0. [[https://github.com/vuejs/vue][Vue v2]] is MIT licensed; download the [[https://cdn.jsdelivr.net/npm/vue@2.6/dist/][vue.esm.browser.js]] library for use with this project.

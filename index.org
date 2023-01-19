@@ -2,9 +2,17 @@
 #+date: <2022-11-28 Mon>
 #+vue: t
 
-People ask me how I write my interactive tutorials. The first few years, I used d3.js, and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive tutorials]]. I now use Vue.js v2, so I'm writing a new interactive tutorial about how I make interactive tutorials with Vue. On this page I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]], using [[https://v3.vuejs.org/][Vue.js v2]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
+People sometimes ask me how I write my interactive tutorials. I started out using [[https://d3js.org/][d3.js]], and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive pages with d3.js]]. I now use [[https://v3.vuejs.org/][Vue.js v2]], so I'm writing this tutorial about how I make interactive pages with Vue. I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
 
-The style I use here /relies heavily on knowledge of SVG/. I know SVG pretty well so I use a style that builds on it. If SVG isn't your preference, you may find that you want to use an entirely different style of implementing diagrams. This page documents how I write my pages, but there are many different ways to make [[https://explorabl.es/][interactive pages]] and I'm not saying this is the only or best way. It happens to be what works for me.
+In this tutorial I'm using SVG for the diagrams. DOM-manipulating libraries like d3 and Vue work with both HTML and SVG. I usually choose SVG unless there's some specific reason to choose Canvas or WebGL.
+
+The goal is to implement interactive diagrams like this:
+
+#+begin_export html
+<figure style="clear:both">
+  <a-output :skip-nav="true" step="20" />
+</figure>
+#+end_export
 
 * Web page
 :PROPERTIES:
@@ -22,7 +30,7 @@ I usually start with a basic web page template that includes scripts, footers, a
 
 I attach an ~id=~ to an html element so that I can get to it from JavaScript. Sometimes I'll attach it to the ~<svg>~ and sometimes to a ~<div>~ or ~<figure>~ outside the diagram. For this page, I want interactive elements outside the SVG diagram so I'm putting the id on the ~<figure>~.
 
-I use a ~viewBox~ on ~<svg>~ to tell it the coordinate system I want for drawing. I can use that to keep a consistent coordinate system even if the diagram is resized. I've hard-coded it for now but later on I'll show how to calculate it dynamically.
+I use a ~viewBox~ on ~<svg>~ to tell it the coordinate system I want for drawing. I can use that to keep a consistent coordinate system even if the diagram is resized. I've hard-coded it for now but later on I'll show how to calculate it dynamically. I temporarily set CSS =background= or =border= on the new SVG so that I can see what space it occupies on the page.
 
 For the rest of the page I'll focus on the diagrams and won't show the header, footer, and text of the page.
 
@@ -42,28 +50,40 @@ The tutorial is about drawing circles on a square grid, so I need to draw a grid
 </figure>
 #+end_export
 
-That's plain HTML+SVG. I could've created that SVG with an interactive editor but in this case I wrote it by hand. But I want /many/ grid cells. This is where the coding comes in. I want to repeat it, varying the position each time:
+That's plain HTML+SVG. I could've created that SVG with an interactive editor but in this case I wrote it by hand. But I want /many/ grid cells. I want to repeat it, varying the position each time:
 
 #+begin_export html
 <figure>
   <a-output step="3" />
   <a-step restrict="&lt;figure" step="3" />
+</figure>
+#+end_export
+
+How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create one =<rect>= for each element in the =positions= array. The ~:x=~ syntax means it's setting =x= attribute by calculating the JavaScript expression =q * scale=. 
+
+Let's look at the JavaScript powering the page:
+
+#+begin_export html
+<figure>
   <a-step show="js" step="3" />
 </figure>
 #+end_export
 
-How does this work? In Vue, ~v-for~ means to repeat an element. In this case, it will create the =<rect>= for each element in =positions=. I make an array =positions= that contains all the =q=, =r= values I want on the grid, and then Vue will make one =<rect>= for each. The ~:x=~ syntax means it's setting the =x= attribute, but will compute it using a Javascript expression like =q * scale=. I often use =q=, =r= for the /grid/ coordinates and =x=, =y= for the /diagram/ (pixel) coordinates to reduce the chances of mixing them up.
+I first build that =positions= array. Here I'm using the variable names =q= for column and =r= for row. These are /grid/ coordinates. I use variables =x=, =y= for the /diagram/ (pixel) coordinates. I find that when I use =x=, =y= for both, I end up with more bugs.
 
-In React, I'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte I'd use ~#{each … in positions}~. In Lit I'd use ~${repeat(positions, …)}~. These libraries have a way to loop over arrays, but they differ in the details. I'm showing Vue on this page but the concepts are similar across these libraries.
+Once I have the =positions= array, I tell Vue to go to work on ~#diagram~, the HTML =<figure>=. I have to /export/ variables from JavaScript to the document by listing them in ~data~.
 
-Those of you who know SVG might choose to use =viewBox= or =transform= to change the coordinate system to place points at the center of each grid square instead of at the top left, and also to scale things so that each grid square is 1 unit across instead of =scale= pixels. I did this in the original article but I didn't for this tutorial.
+The ~v-for~ syntax is specific to Vue. In React, I'd use ~positions.map(…)~ to make an array of =<rect>=. In Svelte I'd use ~#{each … in positions}~. In Lit I'd use ~${repeat(positions, …)}~. 
+Each library has a way to loop over arrays, but the syntax differs. I'm showing Vue on this page but the concepts are similar across these libraries.
+
+Those of you who know SVG might choose to use =viewBox= or =transform= to change the coordinate system to place points at the center of each grid square instead of at the top left, and also to scale things so that each grid square is 1 unit across instead of =scale= pixels. On this page I start out with a conventional coordinate system with 22✕22 top-left positioned tiles, and later on [[href:#coordinate-systems][show how 1✕1 centered tiles simplifies the code]].
 
 * Detail: negative space
 :PROPERTIES:
 :CUSTOM_ID: detail-negative-space
 :END:
 
-While working on a page, I'll sometimes work on the details during the process and sometimes towards the end. On this page I'll work on them during the process. For the grid, I sometimes use [[href:/making-of/little-things/#negative-space][negative space]]. Instead of drawing the grid lines, I'll draw grid interiors slightly smaller, in a color other than the background. The gaps serve as the edges:
+While working on a page, I'll sometimes work on the details during the process and sometimes towards the end. On this page I'll work on them during the process. For the grid, I sometimes use [[href:/making-of/little-things/#negative-space][negative space]]. Drawing the edges in the foreground color leads the reader to focus on the edges. Instead, I'll draw the edges in the background color so they don't draw the focus, and then color the tile in gray or some other color.
 
 #+begin_export html
 <figure>
@@ -139,7 +159,19 @@ The diagram is now showing the /output/ of the algorithm, but it's not yet inter
 </figure>
 #+end_export
 
-In Vue, React, etc. the "source of truth" is a JavaScript value, and the HTML element displays/edits it. I need two parts, setting the slider /from/ a  JavaScript variable, and updating the JavaScript variable /from/ the slider when it's moved. In Vue, ~v-model~ is a shorthand syntax for setting both of those steps. In Svelte, ~bind:value~ is the shorthand syntax. In React and Lit, I can write the two parts separately. I'm using ~v-model.number~ to tell Vue that I want the value to be a number instead of a string:
+#+begin_export html
+<div style="display: flex; flex-wrap: wrap; align-items: start">
+
+  <div style="flex: 1">
+    In libraries like Vue and React, the "source of truth" is a JavaScript variable. The HTML element mirrors it. The slider has a property that gets the value from the variable. The slider then emits an event to send a value to the variable. This is called "props down, events up" in the React and Vue worlds.
+  </div>
+
+  <img src="props-down-events-up.png" alt="Flow: variable value down as a prop, event up to update the variable" width="50%" />
+
+</div>
+#+end_export
+
+In Vue, ~<input v-model.number="value" />~ is a [[https://vuejs.org/guide/essentials/forms.html][shorthand syntax]] for linking both the property and the event, and ~.number~ tells it that I want to use a number instead of a string. That expands out to ~<input :value="value" @input="value = $event.target.valueAsNumber" />~. In Svelte, ~<input bind:value={value} />~ is the shorthand syntax. In React I write them separately, ~<input value={this.state.value} onChange={(event) => this.setState({value: event.target.valueAsNumber})} />~. In Lit I also write them separately, ~<input value=${this.value} @input=${this.value = (event) => this.value = event.target.valueAsNumber} />~.
 
 #+begin_export html
 <figure>
@@ -147,7 +179,7 @@ In Vue, React, etc. the "source of truth" is a JavaScript value, and the HTML el
 </figure>
 #+end_export
 
-With the radius, I have /two/ =<input>= elements, both set to the same variable. That way I can edit either way (as a slider or an input box).
+With the radius, I have /two/  =<input>= elements, both set to the same variable. That way I can edit either way (as a slider or an input box).
 
 Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
 
@@ -247,9 +279,9 @@ We're not done yet! I want to snap the drag handle to the nearest grid tile, usi
 </figure>
 #+end_export
 
-There are some other details to take care of. Touch events /also/ scroll the browser view. We need to ~prevent~ the ~@touchstart~ event from its default action to stop the scrolling when dragging the handle.
+There are some other details to take care of. Touch events /also/ scroll the browser view. I need to ~prevent~ the ~@touchstart~ event from its default action to stop the scrolling when dragging the handle.
 
-It works now.  [[href:/making-of/little-things/#interactivity][It could be better]]. Even though some of this code is reusable across projects, it's still a bit of work to make draggable handles. I often start with sliders and try out the diagram before implementing drag handles.
+It works now. [[href:/making-of/little-things/#interactivity][It could be better]]. Even though some of this code is reusable across projects, it's still a bit of work to make draggable handles. The JavaScript file went from around 40 lines to 100 lines. I often start with sliders and try out the diagram before implementing drag handles.
 
 * Reusable drag handle
 :PROPERTIES:
@@ -286,7 +318,7 @@ The code is similar to what I wrote in the previous section, but the refactoring
 
 #+begin_export html
 <details>
-<summary>See the diff</summary>
+<summary>See the diff→</summary>
 <figure>
   <div>The common part of the html moves into the component:</div>
   <a-step step="10" show="html" :diff="true" restrict="&lt;svg"/>
@@ -351,7 +383,7 @@ The diagram shows the /output/ of the algorithm, but to explain how an algorithm
 
 #+begin_export html
 <details>
-<summary>See the diff</summary>
+<summary>See the diff→</summary>
 <div>I'm also taking the slider out.</div>
 <figure>
   <a-step step="12" :diff="true" restrict="&lt;figure" />
@@ -368,11 +400,11 @@ Now I have two identical diagrams:
 </figure>
 #+end_export
 
-Notice that because I created two separate instances of Vue, the two diagrams have their own =data= including center and radius. Sometimes I want them to be in sync and sometimes I want them independent. Here I implemented them as independent values. If I want them to be in sync, I'll create a ~new Vue()~ with only data and no diagram, and then I'll point the other diagrams at the shared data.
+Notice that because I created two separate instances of Vue, the two diagrams have their own =data= including center and radius. Sometimes I want them to be in sync and sometimes I want them independent. Here I implemented them as independent values. If I want them to be in sync, I'll create a ~Vue.observable()~ with only data and no diagram, and then I'll point the other diagrams at the shared data.
 
 I use copy/paste here instead of immediately building reusable abstractions because I've found that [[https://simblob.blogspot.com/2021/04/redesigning-my-circle-diagrams-part-2.html][when I build the abstraction first, it makes my diagrams worse]]. I find myself wanting to use the abstraction rather than making the best diagram for each situation. The abstractions are better when I wait to see what's in common.
 
-The main concept here is /distances/, so I want to make the second diagram show distances. To implement this, I added =<text>= to each grid tile, using Vue's ~{{…}}~ to evaluate a JavaScript expression to set the text:
+The main concept here is /distances/, so I want to make the second diagram show distances. To implement this, I added ~<text>~ to each grid tile, using Vue's ~{{…}}~ to evaluate a JavaScript expression to set the text:
 
 #+begin_export html
 <figure>
@@ -398,7 +430,7 @@ I'm going to focus on the second diagram for a bit. The black text on red square
 
 #+begin_export html
 <details>
-<summary>See the diff</summary>
+<summary>See the diff→</summary>
 <figure>
   <a-step step="14" :diff="true" restrict="diagram-distances" />
 </figure>
@@ -434,7 +466,7 @@ So let's design this diagram around /distances/.
 
 #+begin_export html
 <details>
-<summary>See the diff</summary>
+<summary>See the diff→</summary>
 <figure>
   <a-step step="15" :diff="true" restrict="diagram-distances" />
   <a-step step="15" show="js" :diff="true" />
@@ -450,7 +482,7 @@ So let's design this diagram around /distances/.
 
 I think this design without the red areas helps the reader focus on distances.
 
-There's a bit more I want to do with the distance diagram but I'm wanting to refactor. I try to wait before I refactor but I think the repeated ~v-for~ loop and the repeated ~insideCircle()~ calls could be simplified. I'm using SVG ~<g>~ to *g*roup the elements together so that I can use a single ~v-for~ loop. The =transform= on this will position elements on the center of the tile. Then I'm calling ~insideCircle()~ just once, and assigning the result to a =class=:
+There's a bit more I want to do with the distance diagram but I'm wanting to refactor. I try to wait before I refactor but I think the repeated ~v-for~ loop and the repeated ~insideCircle()~ calls could be simplified. I'm using SVG ~<g>~ to group the elements together so that I can use a single ~v-for~ loop. The =transform= on this will position elements on the center of the tile. Then I'm calling ~insideCircle()~ just once, and assigning the result to a =class=:
 
 #+begin_export html
 <figure>
@@ -466,7 +498,7 @@ I can use that =class= with CSS rules to apply the color and font changes:
 </figure>
 #+end_export
 
-There's more refactoring that could be done. For example, I could make that ~<g>~ into a component that has the rect and text inside of it.
+There's always more refactoring that could be done but I have to balance my desire to make everything clean with my desire to finish the page. I try to remind myself that the end user (the reader) doesn't directly benefit from my abstractions.
 
 * Radius display
 :PROPERTIES:
@@ -474,9 +506,9 @@ There's more refactoring that could be done. For example, I could make that ~<g>
 :END:
 
 The algorithm is about comparing distances to the radius. The current design shows the distances.
-After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption. To implement the measure line, I want to use arrows. In SVG, I use [[href:/making-of/little-things/#arrows][markers]]. It'll be an arrow pointing left, the measurement, and an arrow pointing right. I adjust the starting position of the line to give a little room for the label. It might be better to calculate this but [[https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it][YAGNI]] says I shouldn't worry about it.
+After removing the radius slider, there's no place that shows the actual radius. I could display the value with a measure line and also in the figure caption. To implement the measure line, I want to use [[href:/making-of/little-things/#arrows][arrows]]. In SVG, I use [[https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker][markers]]. It'll be an arrow pointing left, the measurement, and an arrow pointing right. I adjust the starting position of the line to give a little room for the label.
 
-The SVG is a little messy, and I could clean it up later by writing a reusable component to draw an arrow:
+The SVG is a little messy, and I'll clean it up later:
 
 #+begin_export html
 <figure>
@@ -496,7 +528,7 @@ The =<figure>= element has an optional =<figcaption>= description of the figure,
 
 #+begin_export html
 <figure>
-  <a-step step="17" restrict="figcaption" />
+  <a-step step="17" restrict="&lt;figcaption" />
 </figure>
 #+end_export
 
@@ -525,7 +557,16 @@ There are a /lot/ of ~+1/2~ and ~* scale~ expressions in the code. For example:
 </figure>
 #+end_export
 
- I can clean up all these calculations by changing the coordinate system for the diagram. Instead of =0,0= being the top left of the grid and each tile being =scale= wide, I can make =0,0= the /center/ of the top left tile and each tile being =1= wide:
+#+begin_export html
+<div style="display: flex; flex-wrap: wrap; align-items: start">
+
+  <div style="flex: 1">
+ I can clean up all these calculations by changing the coordinate system for the diagram. I've been using 22✕22 tiles with 0,0 being in the top left. The calculations would be simpler if I use 1✕1 tiles with 0,0 being in the center.
+  </div>
+
+  <img src="coordinate-shift.png" alt="Change coordinate systems to use 1x1 squares" width="50%" />
+</div>
+#+end_export
 
 #+begin_export html
 <figure>
@@ -545,7 +586,7 @@ Ideally I would've made this change much earlier in the process, but sometimes I
 
 #+begin_export html
 <details>
-<summary>See the diff (long)</summary>
+<summary>See the diff (long)→</summary>
 <div>Essentially I changed <code>scale</code> to 1 and also shifted everything by half a tile.</div>
 <figure>
   <a-step step="18" show="js" :diff="true" restrict="^for \(let el" />
@@ -554,14 +595,14 @@ Ideally I would've made this change much earlier in the process, but sometimes I
 </details>
 #+end_export
 
-Use SVG / Canvas transforms to set the scale and origin to what's convenient for your diagram.
+SVG, Canvas, and WebGL all support using transforms. Use them to make the diagram code simpler.
 
 * Bounding box diagram
 :PROPERTIES:
 :CUSTOM_ID: diagram-bounding-box
 :END:
 
-The [[href:/grids/circle-drawing/#bounding-box][next diagram on the page]] started out as a variant of the previous one. When making two variants of a diagram, the easiest thing is to copy/paste, even though we've been taught not to. The disadvantage of copy/paste is that if you want to change both diagrams then you have to make the changes twice. The advantage of copy/paste though is that it's easier to make the diagrams different. Since I don't /know/ ahead of time that these two diagrams should be the same, I've had better results by letting the two diagrams evolve separately, and /then/ looking for similarities to refactor.
+The [[href:/grids/circle-drawing/#bounding-box][next diagram on the page]] started out as a variant of the previous one. When making two variants of a diagram, the easiest thing is to copy/paste, even though we've been taught not to. The disadvantage of copy/paste is that if you want to change both diagrams then you have to make the changes twice. The advantage of copy/paste though is that it's easier to make the diagrams different. I don't /know/ ahead of time that these two diagrams should be the same, and I've had better results by letting the two diagrams evolve separately, and /then/ looking for similarities to refactor.
 
 The focus of this page is the bounding box. Let's highlight the bounding box. Outside the bounding box the algorithm doesn't calculate distances, so let's remove those distances from the diagram.
 
@@ -574,7 +615,7 @@ The focus of this page is the bounding box. Let's highlight the bounding box. Ou
 
 #+begin_export html
 <details>
-<summary>I implemented this by adding a <code>bbox</code> bounding box computed value, and then applying a different style to tiles outside the bounding box. See the diff</summary>
+<summary>I implemented this by adding a <code>bbox</code> bounding box computed value, and then applying a different style to tiles outside the bounding box. See the diff→</summary>
 <figure>
   <a-step step="19" show="js" :diff="true" restrict="bbox\(\)|insideBounds" />
   <a-step step="19" :diff="true" restrict="&lt;svg" />
@@ -592,7 +633,8 @@ I also want to add measure lines labeling the bounding box. I added two columns 
 
 #+begin_export html
 <details>
-<summary>This change was entirely in the HTML, and didn't require changing the JavaScript. It's four gray lines, four arrows, and two labels. Changes like this allows me to have multiple diagrams that share JavaScript but differ only in the configuration parmaeters. See the diff</summary>
+<summary>This change was entirely in the HTML, and didn't require changing the JavaScript. It's four gray lines, four arrows, and two labels. 
+Changes like this allow me to have multiple diagrams that share JavaScript but differ only in the configuration parmaeters. See the diff→</summary>
 <figure>
   <a-step step="20" :diff="true" />
 </figure>
@@ -606,14 +648,11 @@ I also want to add measure lines labeling the bounding box. I added two columns 
 
 I have three diagrams now. I've added things to the later diagrams that could be in the earlier ones too:
 
-- The 1 ✕ 1 tile size simplifies calculations compared to the scale ✕ scale tiles.
+- The 1 ✕ 1 tiles are easier to work with than the =scale= ✕ =scale= tiles.
 - The =arrow= CSS class handles the styling of arrow lines.
-- A =<figcaption>= describes the diagram.
-- I have =.inside-circle=, =.inside-bounds= CSS classes instead of putting colors in the HTML.
-- I'm calculating the SVG =viewBox= instead of hard-coding it.
-- The svg =<defs>= section is the same among all SVGs on the page, so I can move this out into its own 0✕0 SVG. Note that if you want the defs to be different, they need to use different =id= values, because HTML =id= has to be unique on the page, not only within an SVG.
-- The CSS is fairly similar but the tile color in the first diagram is red instead of gray, so I used a more specific CSS rule to override the gray color.
-- The JavaScript code for all three diagrams is the same, so the diagrams differ only in their HTML. I can make more variants of this diagram by tweaking the HTML.
+- The =<figcaption>= describes the diagram.
+- The =.inside-circle=, =.inside-bounds= CSS classes are simpler than setting colors inline in the HTML.
+- The SVG =viewBox= is calculated instead instead of hard-coded.
 
 #+begin_export html
 <figure>
@@ -621,22 +660,42 @@ I have three diagrams now. I've added things to the later diagrams that could be
 </figure>
 #+end_export
 
-The grid of tiles is the only thing left that might be worth factoring out of the diagram code, but it's only worth it if I'm going to make several more diagrams in this style. I won't do that here, but I did on the original page when I wanted to add several more diagrams.
+The three diagrams can share some of their implementation:
+
+- The SVG =<defs>= section is the same among all SVGs on the page, so it can be shared in a hidden 0✕0 SVG. Note that if you want the defs to be different, they need to use different =id= values, because HTML =id= has to be unique on the page, not only within an SVG.
+- The CSS is fairly similar but the tile color in the first diagram is red instead of gray. I used common CSS to set all three, then a more specific CSS rule to override the gray color in one diagram.
+- The JavaScript code for all three diagrams is the same, so the diagrams differ only in their HTML. I can make more variants of this diagram by tweaking the HTML.
+
+The grid of tiles is the only thing left that might be worth factoring out of the diagram code, but it's only worth it if I'm going to make several more diagrams in this style.
 
 * Summary
 
-I usually start with an empty diagram and then add a bit at a time. The most obvious thing to show is the output of an algorithm, and then I let the reader change the input. It's easiest to use sliders so I'll start with those and then replace them with direct manipulation. I use bidirectional mapping between the /data/ I am trying to manipulate and the /visual/ expression of it in the diagram. I usually wait a bit to make reusable abstractions both because premature abstraction wastes time and also because I've found that making the abstractions early makes my diagrams worse. I'll even use copy/paste to avoid making an abstraction too early. After the diagram evolves, I can build abstractions for any remaining repetitive code.
+This page is about how I write my interactive tutorials. I only showed how I make the interactive diagrams, but the same interactivity implementation can also work for text and sample code on the page. 
 
-Even though I presented the concepts on this page with Vue, I think there are many other libraries worth considering. [[https://www.redblobgames.com/x/2014-starter-page/][I have some "starter" code]] with Vue, React, Lit, and Preact. Feel free to copy it to get started.
+- I usually start with an empty diagram and then add a bit at a time. I get the shapes right then interaction and colors.
+- The first diagram shows the output of an algorithm, with the reader changing the input. After that, I try to make one diagram for each concept. I try to use red to highlight the main concept.
+- It's easiest to start with sliders to control the inputs. It's usually better design to use direct manipulation to control the inputs. But it takes more code. Compare [[https://github.com/redblobgames/making-of-circle-drawing/tree/main/21/][~130 lines of JavaScript]] in the final diagrams to [[https://github.com/redblobgames/making-of-circle-drawing/tree/main/no-draggable/][~55 lines]] if I had used sliders.
+- Some values flow one way, from variables to the /visual/ expression of it in the diagram. User inputs such as sliders or direct manipulation flow both ways, with the variables affecting the visuals, and the visuals updating the variables. Vue's reactivity system simplifies both one-way and two-way flow.
+- There are lots of little "polish" details that can make the page feel better. I covered only a few of them here; see [[href:/making-of/little-things/][my list]] of other things I do.
+- I usually wait a bit to make reusable abstractions both because premature abstraction wastes time and also because I've found that making the abstractions early makes my diagrams worse. I'll even use copy/paste to avoid making an abstraction too early. After the diagram evolves, I can build abstractions for any remaining repetitive code. Many diagrams end up sharing some elements.
 
-- Would these diagrams work just as well with direct DOM manipulations? Probably. I find =innerHTML= to work reasonably well in a lot of cases. However it doesn't preserve state, so you have to be careful with sliders and draggable elements.
+#+begin_export html
+<figure>
+  <a-output :skip-nav="true" step="layers" />
+</figure>
+#+end_export
+
+- I use SVG for diagrams when I can. The declarative style (Vue, React, etc.) works well with it, and the same style of code also works for the non-diagram parts of the page (text and sample code). I can attach event handlers to individual elements like the drag handle circles in these diagrams. But sometimes I need to use Canvas or WebGL, and I'll write code in an imperative style in those cases.
+- I think of these as "documents" and not "apps" so I start with the HTML+SVG, and use the JavaScript to power the HTML+SVG. Alpine and Petite-Vue work this way, and Vue can work this way. But you can also write interactive tutorials the other way, in an "app" style where you start with the JavaScript and use it to generate HTML+SVG. React and Svelte work this way, and Vue can work this way as well.
+
+[[https://www.redblobgames.com/x/2014-starter-page/][I have some "starter" code]] with Vue, React, Lit, and Preact. Feel free to copy it, or the code in these examples, to get started.
+
+#+begin_comment
+- Would these diagrams work just as well with direct DOM manipulations? I find =innerHTML= to work reasonably well in a lot of cases. However it doesn't preserve state, so you have to be careful with sliders and draggable elements.
 - Would these diagrams work just as well with d3.js? I used to make interactive SVG diagrams with an imperative style of code (jQuery/d3.js) but now use a declarative style (Vue/React/Svelte/etc.). I've found that I write much less code, it's easier to write, and I make fewer mistakes.
-- Would it be better to use Canvas or SVG or WebGL? I pick SVG when I can. The declarative style works well with it, and the same style of code also works for the non-diagram parts of the page (text and sample code). I can attach event handlers to individual elements like the drag handle circles in these diagrams. But sometimes I need to use Canvas or WebGL, and I'll write code in an imperative style in those cases.
-- Why not React.js, Svelte, TypeScript? Since I am trying to make pages I can still edit in 20 years, [[href:/making-of/little-things/#site-build-reduce][I want to avoid a build step]], and these require a build step in practice. 
-- Really, why not React.js? Everyone uses it. I found that I prefer adding JavaScript interactivity to a document (Vue templates) instead of writing my document inside JavaScript (React JSX).  I can write SVG and HTML and then sprinkle in formulas to calculate some of the values. I also prefer Vue's /reactivity/ system over React's.
+- Why not React.js, Svelte, TypeScript? Since I am trying to make pages I can still edit in 20 years, [[href:/making-of/little-things/#site-build-reduce][I want to avoid a build step]], and these require a build step in practice.
 - Why not Vue 3? I am using Vue 2 for now, in part because the build size is much smaller than Vue 3's, but also in part because Vue 3 doesn't add much that I need. I would switch if I could find a way to make it much smaller by discarding the features I don't use.
-
-This page is about how I write my pages, and not a specific recommendation for which libraries /you/ should use.
+#+end_comment
 
 #+begin_export html
 <style>
@@ -670,7 +729,7 @@ This page is about how I write my pages, and not a specific recommendation for w
   pre { line-height: 1.25em; }
 
   /* Prism */
-  .language-html, .language-handlebars, .language-javascript { font-size: 1rem; }
+  .language-html, .language-handlebars, .language-javascript { font-size: calc(0.8 * var(--font-size)); }
 
   /* Prism html, purple theme */
   :is(.language-html,.template-string) .token.punctuation { color: hsl(300 10% 60%); font-weight: normal; }
@@ -705,6 +764,6 @@ This page is about how I write my pages, and not a specific recommendation for w
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 02 Jan 2023<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 18 Jan 2023<!-- hhmts end -->
 </x:footer>
 #+end_export

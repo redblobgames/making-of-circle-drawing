@@ -21,10 +21,9 @@
                      : 'hsl(250 10% 93%)'"
         />
         <circle fill="yellow"
-                @touchstart.prevent=""
-                @pointerdown="pointerDown"
-                @pointerup="pointerUp"
-                @pointercancel="pointerUp"
+                @touchstart.prevent="" @dragstart.prevent=""
+                @pointerdown.left="pointerDown"
+                @pointerup="pointerUp" @pointercancel="pointerUp"
                 @pointermove="moveCenter"
                 :r="0.4 * scale"
                 :cx="(center.q + 1/2) * scale"
@@ -32,11 +31,11 @@
       </svg>
       <label>
         col = <input v-model.number="center.q"
-                   type="range" min="0" :max="gridCols-1" />
+                     type="range" min="0" :max="gridCols-1" />
       </label>
       <label>
         row = <input v-model.number="center.r"
-                   type="range" min="0" :max="gridRows-1" />
+                     type="range" min="0" :max="gridRows-1" />
       </label>
       <label>
         radius =

@@ -254,8 +254,10 @@ To implement this, I need a ~dragging~ flag and a pair of event handlers to upda
   <p>
   Pointer events unify touch and mouse, but touch devices <em>also</em>
   let you scroll the page. I want to prevent <code>touchstart</code> on
-  the drag handle from scrolling the page. Then <code>pointerdown</code>+<code>pointerup</code>
-  let me track whether the mouse/finger is held down. The <code>pointercancel</code>
+  the drag handle from scrolling the page. Mouse devices <em>also</em> let you drag text, when text is selected. I want to prevent <code>dragstart</code>
+  to prevent dragging text. Then <code>pointerdown</code>+<code>pointerup</code>
+  let me track whether the mouse/finger is held down. I want to start drag only on
+  the left mouse button so I use <code>pointerdown.left</code>. The <code>pointercancel</code>
   handler gets called <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event">for various reasons</a> and I use that to reset the dragging status.
   </p>
 </details>

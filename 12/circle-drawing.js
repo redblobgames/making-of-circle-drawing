@@ -40,17 +40,15 @@ Vue.component('drag-handle', {
     props: ['value', 'color', 'size'],
     template: `<circle :fill="color" :r="size"
                  :cx="value.x" :cy="value.y"
-                 @touchstart.prevent=""
-                 @pointerdown="pointerDown"
-                 @pointerup="pointerUp"
-                 @pointercancel="pointerUp"
-                 @pointermove="pointerMove"/>`,
+                 @touchstart.prevent="" @dragstart.prevent=""
+                 @pointerdown.left="pointerDown"
+                 @pointerup="pointerUp" @pointercancel="pointerUp"
+                 @pointermove="pointerMove" />`,
     data: () => ({dragging: false}),
     methods: {
         pointerDown(event) {
             this.dragging = true;
             event.currentTarget.setPointerCapture(event.pointerId);
-            this.pointerMove(event);
         },
         pointerUp(event) {
             this.dragging = false;

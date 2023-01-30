@@ -51,7 +51,6 @@ new Vue({
         pointerDown(event) {
             this.dragging = true;
             event.currentTarget.setPointerCapture(event.pointerId);
-            this.moveCenter(event);
         },
         pointerUp(event) {
             this.dragging = false;

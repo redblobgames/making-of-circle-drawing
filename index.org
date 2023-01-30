@@ -163,7 +163,7 @@ The diagram is now showing the /output/ of the algorithm, but it's not yet inter
 <div style="display: flex; flex-wrap: wrap; align-items: start">
 
   <div style="flex: 1">
-    In libraries like Vue and React, the "source of truth" is a JavaScript variable. The HTML element mirrors it. The slider has a property that gets the value from the variable. The slider then emits an event to send a value to the variable. This is called "props down, events up" in the React and Vue worlds.
+    In libraries like Vue and React, the "source of truth" is a JavaScript variable. The HTML element mirrors it. The slider has a property (HTML) that gets the value from the variable (JavaScript). The slider then emits an event (HTML) to send a value to the variable (JavaScript). This pattern is called "two way binding" and is implemented using another pattern called "props down, events up".
   </div>
 
   <img src="props-down-events-up.png" alt="Flow: variable value down as a prop, event up to update the variable" width="50%" />
@@ -171,7 +171,28 @@ The diagram is now showing the /output/ of the algorithm, but it's not yet inter
 </div>
 #+end_export
 
-In Vue, ~<input v-model.number="value" />~ is a [[https://vuejs.org/guide/essentials/forms.html][shorthand syntax]] for linking both the property and the event, and ~.number~ tells it that I want to use a number instead of a string. That expands out to ~<input :value="value" @input="value = $event.target.valueAsNumber" />~. In Svelte, ~<input bind:value={value} />~ is the shorthand syntax. In React I write them separately, ~<input value={this.state.value} onChange={(event) => this.setState({value: event.target.valueAsNumber})} />~. In Lit I also write them separately, ~<input value=${this.value} @input=${this.value = (event) => this.value = event.target.valueAsNumber} />~.
+The syntax varies slightly across libraries:
+
+#+begin_export html
+<!-- https://natclark.com/tutorials/css-scrollable-table/ -->
+<div style="width: calc(1.5 * var(--body-width)); overflow-x: scroll">
+#+end_export
+
+#+macro: code @@html:<tt>$1</tt><code>$2</code><tt>$3</tt>@@
+#+attr_html: :id props-up-events-down :class standard :style position:sticky; top:0; width:100%
+|        | prop    | getter             | event     | setter                                           |
+|--------+---------+--------------------+-----------+--------------------------------------------------|
+| Vue    | ~:value=~ | {{{code(",value,")}}} | ~@input=~   | {{{code(",value = $event.target.value,")}}}     |
+| Alpine | ~:value=~ | {{{code(",value,")}}} | ~@input=~   | {{{code(",value = $event.target.value,")}}}       |
+| Svelte | ~value=~  | {{{code({,value,})}}} | ~on:input=~ | {{{code(",e => value = e.target.value,")}}}      |
+| React  | ~value=~  | {{{code({,this.state.value,})}}} | ~onChange=~ | {{{code({,e => this.setState({value: e.target.value}),})}}} |
+| Lit    | ~value=~  | {{{code({,this.value,})}}} | ~@input=~   | {{{code(${,this.value = e => this.value = e.target.value,})}}} |
+
+#+begin_export html
+</div>
+#+end_export
+
+Binding is how we connect the HTML and JavaScript parts of the page. The prop+event get+set pattern is common enough that Vue has a convenient [[https://vuejs.org/guide/essentials/forms.html][shorthand syntax]]  ~<input v-model="value" />~.  Alpine uses ~<input x-model="value" />~. Svelte uses  ~<input bind:value={value} />~.  React used to have [[https://reactjs.org/docs/two-way-binding-helpers.html][valueLink]] but now recommends writing them out separately. In Lit I also write them out separately.
 
 #+begin_export html
 <figure>
@@ -179,9 +200,7 @@ In Vue, ~<input v-model.number="value" />~ is a [[https://vuejs.org/guide/essent
 </figure>
 #+end_export
 
-With the radius, I have /two/  =<input>= elements, both set to the same variable. That way I can edit either way (as a slider or an input box).
-
-Editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
+With the radius, I have /two/  =<input>= elements, both set to the same variable. Sometimes it's useful to be able to edit the variable in multiple ways. The editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
 
 * Direct manipulation
 :PROPERTIES:
@@ -757,6 +776,11 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   /* Prism diffs */
   .prefix.deleted { color: hsl(0 50% 50%); background: hsl(0 30% 90%); }
   .prefix.inserted { color: hsl(180 50% 50%); background: hsl(180 30% 90%); }
+
+  /* Props down events up table, highlight html vs js in respective colors */
+  #props-up-events-down tr td code { color: hsl(200 30% 50%); background: unset; }
+  #props-up-events-down tr td kbd  { color: hsl(300 30% 50%); background: unset; }
+
 </style>
 
 <x:footer>
@@ -766,6 +790,6 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 18 Jan 2023<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 30 Jan 2023<!-- hhmts end -->
 </x:footer>
 #+end_export

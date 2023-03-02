@@ -45,8 +45,8 @@ new Vue({
     methods: {
         moveCenter(event) {
             let {x, y} = convertPixelToSvgCoord(event);
-            this.center.x = x / this.scale - 1/2;
-            this.center.y = y / this.scale - 1/2;
+            this.center.q = x / this.scale - 1/2;
+            this.center.r = y / this.scale - 1/2;
         },
         
         // export these for use from the html template

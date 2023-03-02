@@ -234,7 +234,7 @@ Here's where it gets tricky. To go from the =center= in grid coordinates to a po
 1. Convert screen coordinates to SVG coordinates, using a helper function.
 2. Convert SVG coordinates to grid coordinates: I divide by =scale= and then subtract =1/2=.
 
-For the first, I use a helper function. It's useful across projects. It doesn't handle all cases, and probably can't [[https://github.com/d3/d3/issues/2810#issuecomment-213786022][because of browser bugs]], but it handles the cases I need it to handle.
+For the first, I use a helper function. It's useful across projects. It doesn't handle all cases, and probably can't [[https://github.com/d3/d3/issues/2810#issuecomment-213786022][because of browser bugs]], but it handles many of the cases I need it to handle. With an [[href:/making-of/draggable/targets.html#parent-transform][extension]] it can take into account SVG transforms.
 
 #+begin_export html
 <figure>
@@ -790,6 +790,6 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 30 Jan 2023<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 02 Mar 2023<!-- hhmts end -->
 </x:footer>
 #+end_export

@@ -2,9 +2,11 @@
 #+date: <2022-11-28 Mon>
 #+vue: t
 
-People sometimes ask me how I write my interactive tutorials. I started out using [[https://d3js.org/][d3.js]], and I wrote [[href:/making-of/line-drawing/][an interactive tutorial about how I made interactive pages with d3.js]]. I now use [[https://v3.vuejs.org/][Vue.js v2]], so I'm writing this tutorial about how I make interactive pages with Vue. I'll recreate the first few diagrams of my [[href:/grids/circle-drawing/][circle drawing tutorial]]. The ideas here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
+People sometimes ask me how I write my interactive tutorials. I can point at the HTML+CSS+JS but that doesn't show the /process/. On this page I'll recreate the first half of my [[href:/grids/circle-drawing/][circle drawing tutorial]], showing an implementation using [[https://v3.vuejs.org/][Vue.js v2]]. 
+The implementation style here will be similar if you use Vue v3 or React or Preact or Lit or Svelte etc.
+I also have [[href:/making-of/line-drawing/][another page showing an implementation using the D3.js/jQuery imperative style]]. 
 
-In this tutorial I'm using SVG for the diagrams. DOM-manipulating libraries like d3 and Vue work with both HTML and SVG. I usually choose SVG unless there's some specific reason to choose Canvas or WebGL.
+In this tutorial I'm implementing diagrams using SVG instead of Canvas or WebGL. I usually choose SVG in part because DOM-manipulating libraries like D3 and Vue make HTML and SVG easier to work with.
 
 The goal is to implement interactive diagrams like this:
 
@@ -13,6 +15,12 @@ The goal is to implement interactive diagrams like this:
   <a-output :skip-nav="true" step="20" />
 </figure>
 #+end_export
+
+The circle drawing tutorial was a medium sized project for me, with multiple diagrams, multiple layers in each diagram, and draggable handles. I'll include pointers to the code in each step. 
+
+This is an /interactive tutorial about making interactive tutorials/.
+
+You should know some Javascript to follow the tutorial. It will help if you know some SVG and HTML. If you're interested in making your own interactive pages, I recommend trying to recreate the diagrams yourself while following the tutorial.
 
 * Web page
 :PROPERTIES:
@@ -790,6 +798,6 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 02 Mar 2023<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 20 Oct 2024<!-- hhmts end -->
 </x:footer>
 #+end_export

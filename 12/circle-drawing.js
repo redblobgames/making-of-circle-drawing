@@ -27,7 +27,7 @@ function insideCircle(center, tile, radius) {
 /** Convert from event coordinate space (on the page) to SVG coordinate
  * space (within the svg, honoring responsive resizing, width/height,
  * and viewBox */
-function convertPixelToSvgCoord(event) {
+function eventToSvgCoordinates(event) {
     const svg = event.currentTarget.ownerSVGElement;
     let p = svg.createSVGPoint();
     p.x = event.clientX;
@@ -55,7 +55,7 @@ Vue.component('drag-handle', {
         },
         pointerMove(event) {
             if (!this.dragging) return;
-            let {x, y} = convertPixelToSvgCoord(event);
+            let {x, y} = eventToSvgCoordinates(event);
             this.$emit('input', {x, y});
         },
     },

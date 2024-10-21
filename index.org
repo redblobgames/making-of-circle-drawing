@@ -242,11 +242,11 @@ Here's where it gets tricky. To go from the =center= in grid coordinates to a po
 1. Convert screen coordinates to SVG coordinates, using a helper function.
 2. Convert SVG coordinates to grid coordinates: I divide by =scale= and then subtract =1/2=.
 
-For the first, I use a helper function. It's useful across projects. It doesn't handle all cases, and probably can't [[https://github.com/d3/d3/issues/2810#issuecomment-213786022][because of browser bugs]], but it handles many of the cases I need it to handle. With an [[href:/making-of/draggable/targets.html#parent-transform][extension]] it can take into account SVG transforms.
+For the first, I use a helper function from [[href:/making-of/draggable/][my drag event handler recipe]]. It's useful across projects. It doesn't handle all cases, and probably can't [[https://github.com/d3/d3/issues/2810#issuecomment-213786022][because of browser bugs]], but it handles many of the cases I need it to handle. With an [[href:/making-of/draggable/targets.html#parent-transform][extension]] it can take into account SVG transforms.
 
 #+begin_export html
 <figure>
-  <a-step step="8" show="js" restrict="function convertPixelToSvgCoord" />
+  <a-step step="8" show="js" restrict="function eventToSvgCoordinates" />
 </figure>
 #+end_export
 
@@ -370,7 +370,7 @@ Does the new component work? Let's try it:
 
 Ok, great! I now have a reusable drag handle component.
 
-I should point out that I usually do not try to make something reusable right away. I write it in a non-reusable way, get it working, then wait until I have a second (or [[https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)][third]]) need for it before I turn it into an abstraction.
+I should point out that I usually do not try to make something reusable right away. I write it in a non-reusable way, get it working, then wait until I have a second (or [[https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)][third]]) need for it before I turn it into an abstraction. I keep a [[href:/making-of/draggable/examples.html][set of recipes]] for drag handling code.
 
 * Radius handle
 :PROPERTIES:
@@ -798,6 +798,6 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   and <a href="https://prismjs.com/">Prism.js</a> 
   and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
   ; &#160;
-  <!-- hhmts start -->Last modified: 20 Oct 2024<!-- hhmts end -->
+  <!-- hhmts start -->Last modified: 21 Oct 2024<!-- hhmts end -->
 </x:footer>
 #+end_export

@@ -200,7 +200,7 @@ The syntax varies slightly across libraries:
 </div>
 #+end_export
 
-Binding is how we connect the HTML and JavaScript parts of the page. The prop+event get+set pattern is common enough that Vue has a convenient [[https://vuejs.org/guide/essentials/forms.html][shorthand syntax]]  ~<input v-model="value" />~.  Alpine uses ~<input x-model="value" />~. Svelte uses  ~<input bind:value={value} />~.  React used to have [[https://reactjs.org/docs/two-way-binding-helpers.html][valueLink]] but now recommends writing them out separately. In Lit I also write them out separately.
+Binding is how we connect the HTML and JavaScript parts of the page. The prop+event get+set pattern is common enough that Vue has a convenient [[https://vuejs.org/guide/essentials/forms.html][shorthand syntax]] ~<input v-model="value" />~.  Alpine uses ~<input x-model="value" />~. Svelte uses  ~<input bind:value={value} />~.  React used to have [[https://reactjs.org/docs/two-way-binding-helpers.html][valueLink]] but now recommends writing them out separately. In Lit I also write them out separately.
 
 #+begin_export html
 <figure>
@@ -208,7 +208,7 @@ Binding is how we connect the HTML and JavaScript parts of the page. The prop+ev
 </figure>
 #+end_export
 
-With the radius, I have /two/  =<input>= elements, both set to the same variable. Sometimes it's useful to be able to edit the variable in multiple ways. The editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
+With the radius, I have /two/ =<input>= elements, both set to the same variable. Sometimes it's useful to be able to edit the variable in multiple ways. The editable variables need to be exported in Vue's =data= section, but I already had them there so I didn't have to change the JavaScript in this step.
 
 * Direct manipulation
 :PROPERTIES:
@@ -796,8 +796,7 @@ This page is about how I write my interactive tutorials. I only showed how I mak
   Created 28 Nov 2022 
   with <a href="https://v2.vuejs.org/">Vue.js</a> 
   and <a href="https://prismjs.com/">Prism.js</a> 
-  and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>
-  ; &#160;
-  <!-- hhmts start -->Last modified: 22 Dec 2024<!-- hhmts end -->
+  and <a href="https://www.npmjs.com/package/diff-sequences">Diff-Sequences</a>;
+  <!-- hhmts start -->Last modified: 29 Mar 2026<!-- hhmts end -->
 </x:footer>
 #+end_export
